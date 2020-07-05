@@ -1,12 +1,19 @@
 import React from 'react';
-import logo from './logo.svg';
+
+import {Route,Redirect} from 'react-router-dom'
+
 import Login from './containers/Login'
+import Home from './containers/Home'
 import './App.css';
+
 
 function App() {
   return (
     <div className="App">
-      <Login/>
+      {/*<Route path='/' exact render={()=><Redirect to='/login'/>}/>*/}
+      {/*<Route path='/login' component={Login}/>*/}
+      {/*<Route path='/Home' component={Home}/>*/}
+      <Home/>
     </div>
   );
 }
