@@ -1,19 +1,17 @@
 import React from 'react';  //导入react
 
-import { Layout, Menu, Breadcrumb,Button } from 'antd';
+import { Layout, Breadcrumb,Button } from 'antd';
 
 
 import './css/Home.css'   //引入css样式
 
-import SiderLink from '../components/SiderLink'
+import SiderLink from '../components/SiderLink'   //引入侧边栏
+import ContentRouter from '../components/ContentRouter'   //引入内容
 
-
-
-const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 //xxx 组件名
-class xxx extends React.Component {
+class Home extends React.Component {
 //构造函数
     constructor(props) {
         super(props)
@@ -65,7 +63,8 @@ class xxx extends React.Component {
                         minHeight: 280,
                       }}
                     >
-                      <h2>内容</h2>
+                      <ContentRouter/>
+
                     </Content>
 
                   </Layout>
@@ -77,4 +76,4 @@ class xxx extends React.Component {
     }
 }
 
-export {xxx as default}
+export {Home as default}

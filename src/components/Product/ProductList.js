@@ -1,6 +1,6 @@
 import React from 'react';  //导入react
 //xxx 组件名
-class xxx extends React.Component {
+class ProductList extends React.Component {
 //构造函数
     constructor(props) {
         super(props)
@@ -11,9 +11,10 @@ class xxx extends React.Component {
     render() {
         return (
             <div>
+              <h2>商品列表</h2>
             </div>
         )
     }
 }
 
-export {xxx as default}
+export {ProductList as default}

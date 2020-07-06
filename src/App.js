@@ -1,9 +1,11 @@
 import React from 'react';
 
-import {Route,Redirect} from 'react-router-dom'
+import {Route} from 'react-router-dom'
 
-import Login from './containers/Login'
+// import Login from './containers/Login'
+
 import Home from './containers/Home'
+import UserList from './components/UserControl/UserList'
 import './App.css';
 
 
@@ -12,7 +14,7 @@ function App() {
     <div className="App">
       {/*<Route path='/' exact render={()=><Redirect to='/login'/>}/>*/}
       {/*<Route path='/login' component={Login}/>*/}
-      {/*<Route path='/Home' component={Home}/>*/}
+      {/*<Route path='/User' component={UserList}/>*/}
       <Home/>
     </div>
   );
