@@ -11,7 +11,7 @@ class UserList extends React.Component {
   render() {
     return (
       <div>
-        <h2>用户管理</h2>
+        <h2>用户列表</h2>
       </div>
     )
   }
