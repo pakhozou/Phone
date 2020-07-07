@@ -1,0 +1,10 @@
+.RoleTable{
+  box-shadow: 2px 10px 10px rgba(0,0,0,.5)!important;
+  margin: 10px auto;
+  width: 800px;
+}
+/*分页居中*/
+.ant-table-pagination-right{
+   float: none!important;
+   text-align: center!important;
+ }

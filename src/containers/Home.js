@@ -26,49 +26,51 @@ class Home extends React.Component {
         }
     }
     //生成面包屑
-    breadcrumb(key){
-      console.log('闯过来的'+key)
-      let breadcrumblist=this.props.data.data
-      breadcrumblist.map((item)=>{
-        if(item.menuChilds.length){
-          if (item.menuId==1){
-            this.setState({
-              mbx1:'',
-              mbx2:''
-            })
-          }
-          item.menuChilds.map((item2)=>{
-            if (item2.menuId==key){
-              this.setState({
-                mbx1:<Breadcrumb.Item>{item.menuName}</Breadcrumb.Item>,
-                mbx2:<Breadcrumb.Item><Link to={item2.menuUrl}>{item2.menuName}</Link></Breadcrumb.Item>
-              })
-            }
+  breadcrumb(key){
+    console.log('闯过来的'+key)
+    let breadcrumblist=this.props.data.data
+    breadcrumblist.map((item)=>{
+      if(item.menuChilds.length){
+        if (item.menuId==1){
+          this.setState({
+            mbx1:'',
+            mbx2:''
           })
         }
-        else {
-          if (item.menuId==key){
+        item.menuChilds.map((item2)=>{
+          if (item2.menuId==key){
+            this.setState({
+              mbx1:<Breadcrumb.Item>{item.menuName}</Breadcrumb.Item>,
+              mbx2:<Breadcrumb.Item><Link to={item2.menuUrl}>{item2.menuName}</Link></Breadcrumb.Item>
+            })
+          }
+        })
+      }
+      else {
+        if (item.menuId==key){
 
-            this.setState({
-              mbx1:<Breadcrumb.Item><Link to={item.menuUrl}>{item.menuName}</Link></Breadcrumb.Item>,
-              mbx2:''
-            })
-          }
-          if (item.menuId==1){
-            this.setState({
-              mbx1:'',
-              mbx2:''
-            })
-          }
+          this.setState({
+            mbx1:<Breadcrumb.Item><Link to={item.menuUrl}>{item.menuName}</Link></Breadcrumb.Item>,
+            mbx2:''
+          })
         }
-      })
-    }
-  editmbx(){
+        if (item.menuId==1){
+          this.setState({
+            mbx1:'',
+            mbx2:''
+          })
+        }
+      }
+    })
+  }
+    //首页点击
+    editmbx(){
     this.setState({
       mbx1:'',
       mbx2:''
     })
   }
+    //挂在前
     componentWillMount() {
       console.log(this.props.data.data);
       this.setState({
@@ -118,7 +120,7 @@ class Home extends React.Component {
                       style={{
                         padding: 24,
                         margin: 0,
-                        minHeight: 280,
+                       height:'auto'
                       }}
                     >
                       <ContentRouter/>
