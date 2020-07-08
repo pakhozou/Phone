@@ -1,13 +1,13 @@
 import React from 'react';  //导入react
-
 import { Layout, Breadcrumb,Button } from 'antd';
-
 import {Link} from "react-router-dom";
 import './css/Home.css'   //引入css样式
-
 import SiderLink from '../components/SiderLink'   //引入侧边栏
-import ContentRouter from '../components/ContentRouter'
 import {observer,inject} from "mobx-react";   //引入内容
+import ContentRouter from '../components/ContentRouter'   //引入内容
+import { Route} from 'react-router-dom'
+import ProductDetails from '../components/Product/ProductDetails'
+
 
 
 const { Header, Content, Sider } = Layout;
@@ -124,7 +124,8 @@ class Home extends React.Component {
                       }}
                     >
                       <ContentRouter/>
-
+                        {/*喜德贵跳转路由*/}
+                        <Route path="/index/Product/ProductDetails" component={ProductDetails}/>
                     </Content>
 
                   </Layout>
