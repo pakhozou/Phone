@@ -6,6 +6,9 @@ class Text extends React.Component {
         super(props)
         this.state = {}
     }
+    componentWillMount() {
+
+    }
 
 //渲染
     render() {

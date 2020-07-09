@@ -1,10 +1,10 @@
 import {observable,action} from "mobx";
-// import Axios from '../util/axios'
-// import Api from '../api/index'
+import axios from 'axios'
 
-class userStore {
-@observable
-data = [
+
+
+class userRole {
+  @observable data = [
   {
     menuId:1,menuName:"首页",menuUrl:"/index/HomePage",menupath:"HomePage",componentPath:"HomePage/HomePage",menuIcon:"AreaChartOutlined",menuState: 0,menuChilds:[]
   },
@@ -72,8 +72,56 @@ data = [
     ]
   }
 ];    //菜单
-  @observable token = ''; //token
-  @observable isLogin = false   //是否登录
+  @observable dataTwo = [];
+  @observable access_token = ''; //token
+  @observable isLogin = false;  //是否登录
+  @observable datalist = [];
+  //获取角色数据
+  @action getRole(list){
+    this.datalist  = list;
+    // console.log(JSON.parse(JSON.stringify(this.datalist)));
+  };
+  //获取菜单数据
+  @action getMenu(data){
+    this.dataTwo = data
+    console.log(JSON.parse(JSON.stringify(this.dataTwo)));
+  };
+//  登录
+  @action login=(obj)=>{
+    return new Promise((resolve,reject)=>{
+      axios.post('/api/user/auth/adminlogin',
+        {password:obj.password,username:obj.username},
+      {
+        transformRequest:[
+          function(data){
+            let params = "";
+            var arr = [];
+            for(var key in data){
+              arr.push(key+"="+data[key]);
+            }
+            params = arr.join("&");
+            return params;
+          }
+        ]
+        }
+        ).then((res)=>{
+        console.log(res);
+        if (res.data.code === 200){
+          this.access_token = res.data.access_token;
+          localStorage.setItem('access_token',res.data.access_token);   //
+          resolve('登录成功')
+        }else {
+          reject('登录失败')
+        }
+      }).catch((err)=>{
+        console.log('错误');
+        console.log(err);
+      })
+    })
+  };
+//  获取用户
+  @action getuserrole(){
 
+  }
 }
-export default userStore
+export default userRole

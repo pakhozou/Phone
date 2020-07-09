@@ -4,7 +4,5 @@
   width: 800px;
 }
 /*分页居中*/
-.ant-table-pagination-right{
-   float: none!important;
-   text-align: center!important;
- }
+
+
