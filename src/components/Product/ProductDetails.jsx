@@ -6,10 +6,6 @@ const { RangePicker } = DatePicker;
 //xxx 组件名
 class ProductDetails extends React.Component {
 //渲染
-
-
-
-
     state = { visible: false };
     showModal = () => {
         this.setState({
