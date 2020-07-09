@@ -41,34 +41,53 @@ const data = [
     expiration:"2020-7-6"
     },
 ];
+function onSwich(checked) {
+    console.log(checked);
+    // console.log(id)
+  }
 function onChange(dates, dateStrings) {
-    console.log('From: ', dates[0], ', to: ', dates[1]);
-    console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
+    const dateParseStart = Date.parse(dateStrings[0])
+    console.log(dateParseStart)
+    const dateParseEnd = Date.parse(dateStrings[1])
+    console.log(dateParseEnd)
   }
 class Discount extends React.Component {
+    
 //构造函数
+
     constructor(props) {
         super(props)
-        this.state = {}
+        this.state = {
+            id:0,
+            visible: false ,
+            visibleAdd: false,
+            inputId:"",
+            inputName:"",
+        }
     };
-
+    ProductName1(e){
+        this.setState({
+            inputName:e.target.value
+        })
+    }
+    ProductName(e){
+        this.setState({
+            inputId:e.target.value
+        })
+    }
     // 查看详情模态框
     showModal = (id) => {
         console.log(id)
         this.setState({
         visible: true,
+        id:id
         });
     };
-
     // 显示模态框事件
-    state = { 
-        visible: false ,
-        visibleAdd: false,
-    };
 
 
     // 添加按钮模态框
-    showModalAdd = () => {
+    showModalAdd =()=>  {
         this.setState({
         visibleAdd: true,
         });
@@ -91,6 +110,25 @@ class Discount extends React.Component {
             visibleAdd: false,
         });
     };
+    // 重置
+    onReset = () => {
+       console.log("重置")
+    //    this.formRef.current.resetFields();
+       this.setState({inputId:''},function(){
+           console.log(this.state.inputId)
+       })
+       this.setState({inputName:''},function(){
+        console.log(this.state.inputName)
+    })
+    };
+
+    // 搜索
+    search = ()=>{
+        console.log("搜索")
+        this.formRef.current.resetFields();
+    }
+
+    formRef = React.createRef();
 //渲染
     render() {
         const columns = [
@@ -121,7 +159,7 @@ class Discount extends React.Component {
               render: (text,record) => (
                 <Space size="large">
                     <Button type='default' onClick={()=>this.showModal(record.id)}>查看详情</Button>
-                    <Switch checkedChildren="启用" unCheckedChildren="禁用" defaultChecked />
+                    <Switch checkedChildren="启用" unCheckedChildren="禁用" defaultChecked onChange={onSwich}/>
                 </Space>
               ),
             },
@@ -181,10 +219,10 @@ class Discount extends React.Component {
                             <Row>
                                 <Col span='1'></Col>
                                 <Col span='23'>
-                                    <Form.Item label='到期时间：'>
+                                    <Form.Item label='有效时间：'>
                                         <RangePicker
                                             ranges={{
-                                            Today: [moment(), moment()],
+                                            // Today: [moment(), moment()],
                                             'This Month': [moment().startOf('month'), moment().endOf('month')],
                                             }}
                                             onChange={onChange}
@@ -196,28 +234,31 @@ class Discount extends React.Component {
                         </Form>
                 </Modal>
                 {/* 头部搜索表单 */}
-                <Form>
+                <Form
+                ref={this.formRef}
+                name='search'
+                >
                     <Row>
                         <Col span='4'>
                             <Button type="primary" onClick={this.showModalAdd}>添加优惠券</Button>
                         </Col>
                         <Col span='4'>
                             <Form.Item label="优惠券id：">
-                                <Input></Input>
+                                <Input onChange={this.ProductName.bind(this)} value={this.state.inputId}></Input>
                             </Form.Item>
                         </Col>
                         <Col span='2'></Col>
                         <Col span='4'>
                             <Form.Item label="优惠券名称：">
-                                <Input></Input>
+                                <Input onChange={this.ProductName1.bind(this)} value={this.state.inputName}></Input>
                             </Form.Item>
                         </Col>
                         <Col span='2'></Col>
                         <Col span='1'>
-                            <Button type="primary">搜索</Button>
+                            <Button type="primary" onClick={this.search}>搜索</Button>
                         </Col>
                         <Col span='4'>
-                            <Button type="default">重置</Button>
+                            <Button type="default" onClick={this.onReset}>重置</Button>
                         </Col>
                     </Row>
                 </Form>
@@ -230,9 +271,22 @@ class Discount extends React.Component {
                 onCancel={this.handleCancel}
                 footer={null}
                 >
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
+                   <Row>
+                        <Col span='12'>优惠券id：{this.state.id}</Col>
+                        <Col span='12'>优惠券名称：{this.state.id}</Col>
+                   </Row>
+                   <Row>
+                        <Col span='12'>使用条件：{this.state.id}</Col>
+                        <Col span='12'>减免金额{this.state.id}</Col>
+                   </Row>
+                   <Row>
+                        <Col span='12'>创建时间：{this.state.id}</Col>
+                        <Col span='12'>结束时间：{this.state.id}</Col>
+                   </Row>
+                   <Row>
+                        <Col span='12'>剩余数量：{this.state.id}</Col>
+                        <Col span='12'>创建者姓名：{this.state.id}</Col>
+                   </Row>
                 </Modal>
             </div>
         )
