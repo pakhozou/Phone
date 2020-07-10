@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-// axios.defaults.baseURL='http://111.229.83.241:9601';
+//喜德贵添加默认地址
+axios.defaults.baseURL='http://111.229.83.241:9601/goods';
 
 // //拦截axios发起的所有请求，通过aispatch修改isLoading为true
 // axios.interceptors.request.use(

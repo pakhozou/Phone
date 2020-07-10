@@ -17,17 +17,19 @@ class addProduct extends React.Component {
     chongZhi (){
         // this.props.refs.pdname.value =""
         this.setState({
-            ProductName:"",
-            ProductDetails:"",
-            Postage:"",
-            weight:"",
-            keyword:"",
+            ProductName:"",//商品名
+            ProductDetails:"",//商品详情
+            Postage:"",//邮费
+            weight:"",//重量
+            keyword:"",//关键字
             flashSale:0,//限时抢购
             HotSale:0,//热销
             coupon:0,//优惠券
-            fileList1: [],
-            fileList2: [],
-            guiGeList:[],
+            fileList1: [],//商品封面图
+            fileList2: [],//商品详情图
+            guiGeList:[],//规格表
+            fenLei:"",//分类
+            pingPai:"",//品牌
         })
     }
 
@@ -118,10 +120,12 @@ class addProduct extends React.Component {
     //获取类型事件
     getType = (e) =>{
         console.log(e);
+        this.setState({fenLei:e})
     }
     //获取品牌事件
     getPingPai = (e)=>{
         console.log(e);
+        this.setState({pingPai:e})
     }
     //是否抢购
     isQiangGou(){
@@ -208,14 +212,22 @@ class addProduct extends React.Component {
                 {id:2,name:"苹果"},
                 {id:3,name:"小米"}
             ],
-            pingPaiListXuanRan:[]
+            pingPaiListXuanRan:[],
+            //规格数据
+            guiGeiList:[
+                {id:1,name:"c型数据线1.5米"},
+                {id:2,name:"苹果X手机钢化膜"},
+                {id:3,name:"小米智能音箱"}
+            ],
+            guiGeiListXuanRan:[],
         }
     }
     componentWillMount(){
         this.setState({
             //渲染下拉框
             pingPaiListXuanRan:this.state.pingPaiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>}),
-            fenLeiListXuanRan:this.state.fenLeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>})
+            fenLeiListXuanRan:this.state.fenLeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>}),
+            guiGeiListXuanRan:this.state.guiGeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>})
         })
     }
     xianshiMoTi(){
@@ -239,7 +251,6 @@ class addProduct extends React.Component {
         function leixingonChange(value) {
             console.log(`selected ${value}`);
         }
-
 
         //规格表
         const columns = [
@@ -419,8 +430,28 @@ class addProduct extends React.Component {
                         <Col span={16}><Input placeholder="售价" style={{width:200}}/></Col>
                     </Row>
                     <Row style={{marginTop:30}}>
-                        <Col span={5} style={{textAlign:"right",lineHeight:"26px"}}>享受优惠券：</Col>
-                        <Col span={16}><Switch defaultChecked  /></Col>
+                        <Col span={5} style={{textAlign:"right",lineHeight:"26px"}}>选择库存分类：</Col>
+                        <Col span={16}>
+                            <Select onChange={this.getType} style={{width:200}}>
+                                {this.state.fenLeiListXuanRan}
+                            </Select>
+                        </Col>
+                    </Row>
+                    <Row style={{marginTop:30}}>
+                        <Col span={5} style={{textAlign:"right",lineHeight:"26px"}}>选择库存品牌：</Col>
+                        <Col span={16}>
+                            <Select onChange={this.getPingPai} style={{width:200}}>
+                                {this.state.pingPaiListXuanRan}
+                            </Select>
+                        </Col>
+                    </Row>
+                    <Row style={{marginTop:30}}>
+                        <Col span={5} style={{textAlign:"right",lineHeight:"26px"}}>选择库存货物：</Col>
+                        <Col span={16}>
+                            <Select onChange={this.getPingPai} style={{width:200}}>
+                                {this.state.guiGeiListXuanRan}
+                            </Select>
+                        </Col>
                     </Row>
                 </Modal>
             </div>
