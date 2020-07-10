@@ -1,6 +1,7 @@
 import React from 'react';  //导入react
 import { Table,  Space ,Button, Switch, Row, Col ,Input ,Form, Modal,DatePicker } from 'antd';
 import moment from 'moment';
+import Axios from 'axios';
 // import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 //xxx 组件名
 const { RangePicker } = DatePicker;
@@ -41,8 +42,13 @@ const data = [
     expiration:"2020-7-6"
     },
 ];
+// const layout = {
+//     labelCol: { span: 8 },
+//     wrapperCol: { span: 16 },
+//   };
 function onSwich(checked) {
     console.log(checked);
+
     // console.log(id)
   }
 function onChange(dates, dateStrings) {
@@ -65,6 +71,21 @@ class Discount extends React.Component {
             inputName:"",
         }
     };
+    // 渲染前
+    componentWillMount(){
+        Axios.get('http://111.229.83.241:9601/coupon/hello',
+            {
+                headers:{
+                    'Content-Type':'application/json'
+                }
+            }
+        ).then(result => {
+            console.log(result)
+        })
+    }
+
+
+    //绑定数据
     ProductName1(e){
         this.setState({
             inputName:e.target.value
@@ -124,8 +145,8 @@ class Discount extends React.Component {
 
     // 搜索
     search = ()=>{
-        console.log("搜索")
-        this.formRef.current.resetFields();
+        console.log(this.state.inputId)
+        console.log(this.state.inputName)
     }
 
     formRef = React.createRef();
@@ -169,6 +190,7 @@ class Discount extends React.Component {
                 <h3>优惠券管理</h3>
                  {/* 添加优惠券模态框 */}
                  <Modal
+                    forceRender
                     title="添加优惠券"
                     visible={this.state.visibleAdd}
                     onOk={this.handleOk}
@@ -182,7 +204,8 @@ class Discount extends React.Component {
                         </Button>,
                     ]}
                     >
-                        <Form>
+                        <Form
+                        >
                             {/* 第一行 */}
                             <Row>
                                 <Col span='1'></Col>
