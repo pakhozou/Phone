@@ -16,12 +16,12 @@ class ContentRouter extends React.Component {
     }
     bindRouter(routerList){
       let RouterList = routerList.map((item)=>{
-        if (item.menuChilds.length === 0){
-          return <Route key={item.menuId} path={item.menuUrl} component={ loadable( () => import(`./${item.componentPath}`))}/>
+        if (item.menuchilds.length == 0){
+          return <Route key={item.menu_id} path={item.menu_url} component={ loadable( () => import(`./${item.componentPath}`))}/>
         }else {
-          return <Route key={item.menuId} path={item.menuUrl}  render={()=>
+          return <Route key={item.menu_id} path={item.menu_url}  render={()=>
             <item.menupath>
-           {this.bindRouter(item.menuChilds)}
+           {this.bindRouter(item.menuchilds)}
             </item.menupath>
           }>
           </Route>
@@ -30,8 +30,10 @@ class ContentRouter extends React.Component {
       return RouterList
     }
     componentWillMount() {
+      let menulist = JSON.parse(localStorage.getItem('menu2'));
+      console.log(menulist);
+      let list =  this.bindRouter(menulist)
       // console.log(this.props.data.data);
-      let list =  this.bindRouter(this.props.data.data);
       // console.log('xxx');
       // console.log(list);
       this.setState({

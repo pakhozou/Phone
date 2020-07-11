@@ -28,20 +28,20 @@ class Home extends React.Component {
     //生成面包屑
   breadcrumb(key){
     console.log('闯过来的'+key)
-    let breadcrumblist=this.props.data.data
+    let breadcrumblist=JSON.parse(localStorage.getItem('menu2'));
     breadcrumblist.map((item)=>{
-      if(item.menuChilds.length){
-        if (item.menuId==1){
+      if(item.menuchilds.length){
+        if (item.menu_id==43){
           this.setState({
             mbx1:'',
             mbx2:''
           })
         }
-        item.menuChilds.map((item2)=>{
-          if (item2.menuId==key){
+        item.menuchilds.map((item2)=>{
+          if (item2.menu_id == key){
             this.setState({
-              mbx1:<Breadcrumb.Item>{item.menuName}</Breadcrumb.Item>,
-              mbx2:<Breadcrumb.Item><Link to={item2.menuUrl}>{item2.menuName}</Link></Breadcrumb.Item>
+              mbx1:<Breadcrumb.Item>{item.menu_nameZh}</Breadcrumb.Item>,
+              mbx2:<Breadcrumb.Item><Link to={item2.menu_url}>{item2.menu_nameZh}</Link></Breadcrumb.Item>
             })
           }
         })
@@ -50,7 +50,7 @@ class Home extends React.Component {
         if (item.menuId==key){
 
           this.setState({
-            mbx1:<Breadcrumb.Item><Link to={item.menuUrl}>{item.menuName}</Link></Breadcrumb.Item>,
+            mbx1:<Breadcrumb.Item><Link to={item.menu_url}>{item.menu_nameZh}</Link></Breadcrumb.Item>,
             mbx2:''
           })
         }
@@ -72,10 +72,7 @@ class Home extends React.Component {
   }
     //挂在前
     componentWillMount() {
-      console.log(this.props.data.data);
-      this.setState({
-
-      })
+      // console.log(this.props.data.data);
     }
 
 //渲染
