@@ -18,3 +18,13 @@
   font-size: 20px;
   line-height: 60px;
 }
+.Exit h3{
+  float: right;
+  margin-right: 50px;
+  margin-left: 50px;
+  color: white;
+}
+.Err404 {
+  margin: 200PX auto;
+  text-align: center;
+}

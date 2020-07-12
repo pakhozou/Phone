@@ -1,7 +1,7 @@
 import {observable,action} from "mobx";
 import Roleapi from '../api/index';
 import axios from '../utils/axios';
-
+import message from 'antd'
 
 
 class userRole {
@@ -228,40 +228,21 @@ class userRole {
 
   @observable selectvalue = ''; //下拉值
   @observable ids = 0 ;    //用户id
+
+  @observable isaddid = 0;  //添加用户id
+  @observable isaddusername = '';  //添加用户姓名
+  @observable isadduserpwd = '';  //添加用户密码
+  @observable cundangqianID = 0;    //存放当前登录用户id
+  @observable username = '';    //存放账号名字
+  @observable RoleStatus = 0;   //角色状态
+
+  @observable treeArr = [];
   //获取角色数据
   @action getRole(list) {
     this.datalist = list;
     // console.log(JSON.parse(JSON.stringify(this.datalist)));
   };
 
-  //获取菜单数据
-  @action getMenu(){
-    let getmenu =JSON.parse(localStorage.getItem('menu'));
-    console.log(getmenu);
-    let menulist =[];
-    getmenu.forEach((item)=>{
-      if (item.menu_parentId==0 ){
-        menulist.push(item);
-        item.menuchilds = [];
-      }else{
-        item.menuchilds = [];
-      }
-    });
-    getmenu.forEach((item)=>{
-      if (item.menu_parentId>0){
-        menulist.forEach((item2)=>{
-          if (item2.menu_id == item.menu_parentId){
-            // console.log(item)
-            item2.menuchilds.push(item);
-
-          }
-        })
-      }
-    })
-    this.menulist = menulist;
-    localStorage.setItem('menu2',JSON.stringify(this.menulist));
-    // console.log(JSON.parse(JSON.stringify(this.menulist)));
-  }
   //登录
   @action login = (obj) => {
     return new Promise((resolve, reject) => {
@@ -280,24 +261,21 @@ class userRole {
             }
           ]
         },
-
         axios.get(Roleapi.userRole.getMenuList).then((res)=>{
-          // console.log('获取menu');
-          // console.log(res.data.data);
-          this.menu = res.data.data;
-          localStorage.setItem('menu',JSON.stringify(this.menu))
+          console.log(res);
+          if(res.data.code == 200){
+            localStorage.setItem('menu',JSON.stringify(res.data.data))
+          }
         })
-      ).then((res) => {
 
+      ).then((res) => {
         console.log(res);
         if (res.data.code === 200) {
           this.access_token = res.data.data.access_token;
           this.token_type = res.data.data.token_type;
-          localStorage.setItem('token_type', res.data.data.token_type);   //
           localStorage.setItem('access_token', res.data.data.access_token);   //
-
           resolve('登录成功')
-        } else {
+        } else{
           reject('登录失败')
         }
       }).catch((err) => {
@@ -314,37 +292,9 @@ class userRole {
 
   @action setmenuarr=(obj)=>{
     this.muenarr = obj;
-    localStorage.setItem('muenarr',this.muenarr)
     // console.log(obj);
     console.log(this.muenarr);
   };
-  //获取状态
-  @action getswitchstatus(obj){
-    console.log(obj);
-    // console.log(typeof obj.statue);
-    // console.log(typeof obj.userId);
-    return new Promise((resolve,reject)=>{
-     if  (obj.statue == 1){
-       obj.statue = 0
-     }else {
-       obj.statue = 1
-     }
-     axios.get(Roleapi.userRole.updateUserStatue,{
-       params:{
-         statue:obj.statue,
-         userId:obj.userId,
-       }
-     }).then((res)=>{
-       // console.log(res);
-       if(res.data.code == 200){
-         resolve('成功')
-       }else {
-         resolve('失败')
-       }
-     })
-   })
-  }
-
 
 }
 export default userRole
