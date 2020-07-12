@@ -220,6 +220,14 @@ class userRole {
   @observable datalist = [];    //存放角色数组
   @observable userRolelist = [];   //存放用户数组
   @observable menu = [];   //存放用户数组
+  @observable muenarr = [];   //点击菜单
+
+  @observable roleID = 0;   //角色ID
+  @observable userID = 0;   //角色ID
+
+
+  @observable selectvalue = ''; //下拉值
+  @observable ids = 0 ;    //用户id
   //获取角色数据
   @action getRole(list) {
     this.datalist = list;
@@ -272,6 +280,7 @@ class userRole {
             }
           ]
         },
+
         axios.get(Roleapi.userRole.getMenuList).then((res)=>{
           // console.log('获取menu');
           // console.log(res.data.data);
@@ -300,9 +309,41 @@ class userRole {
   //  获取用户
   @action getuserRole(userRolelist){
     this.userRolelist = userRolelist
-    console.log(JSON.parse(JSON.stringify(this.userRolelist)));
+    // console.log(JSON.parse(JSON.stringify(this.userRolelist)));
   };
 
+  @action setmenuarr=(obj)=>{
+    this.muenarr = obj;
+    localStorage.setItem('muenarr',this.muenarr)
+    // console.log(obj);
+    console.log(this.muenarr);
+  };
+  //获取状态
+  @action getswitchstatus(obj){
+    console.log(obj);
+    // console.log(typeof obj.statue);
+    // console.log(typeof obj.userId);
+    return new Promise((resolve,reject)=>{
+     if  (obj.statue == 1){
+       obj.statue = 0
+     }else {
+       obj.statue = 1
+     }
+     axios.get(Roleapi.userRole.updateUserStatue,{
+       params:{
+         statue:obj.statue,
+         userId:obj.userId,
+       }
+     }).then((res)=>{
+       // console.log(res);
+       if(res.data.code == 200){
+         resolve('成功')
+       }else {
+         resolve('失败')
+       }
+     })
+   })
+  }
 
 
 }

@@ -70,6 +70,10 @@ class Home extends React.Component {
       mbx2:''
     })
   }
+  Exit=()=>{
+    this.props.history.push('/login');
+    localStorage.clear();
+  }
     //挂在前
     componentWillMount() {
       // console.log(this.props.data.data);
@@ -90,7 +94,7 @@ class Home extends React.Component {
                       手机配件后台管理系统
                     </h2>
                     <div className='Exit'>
-                      <Button type='link'>Exit</Button>
+                      <Button type='link' onClick={this.Exit}>Exit</Button>
                     </div>
                   </div>
                 </Header>
