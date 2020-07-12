@@ -103,6 +103,9 @@ class ProductList extends React.Component {
     chakan(data){
         this.props.history.push({pathname:'/index/Product/ProductDetails',query:{id:data.goodsId}})
     }
+    xiuGai(data){
+        this.props.history.push({pathname:'/index/Product/XiuGaiProduct',query:{id:data.goodsId}})
+    }
     delPD(data){
         axios.post(ioApi.product.delPD,{
             GoodsId:data.goodsId
@@ -383,7 +386,7 @@ class ProductList extends React.Component {
                             <Button type="primary" size="large" shape="circle" icon={<SearchOutlined />} onClick={()=>this.chakan(text)}/>
                         </Tooltip>
                         <Tooltip title="编辑商品">
-                            <Button shape="circle" size="large" icon={<EditOutlined />} />
+                            <Button shape="circle" size="large"  onClick={()=>this.xiuGai(text)} icon={<EditOutlined />} />
                         </Tooltip>
                         <Tooltip title="删除商品">
                             <Popconfirm

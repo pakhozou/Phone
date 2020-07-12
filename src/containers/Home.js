@@ -7,6 +7,7 @@ import {observer,inject} from "mobx-react";   //引入内容
 import ContentRouter from '../components/ContentRouter'   //引入内容
 import { Route} from 'react-router-dom'
 import ProductDetails from '../components/Product/ProductDetails'
+import XiuGaiProduct from "../components/Product/XiuGaiProduct"
 
 
 
@@ -127,6 +128,7 @@ class Home extends React.Component {
                       <ContentRouter/>
                         {/*喜德贵跳转路由*/}
                         <Route path="/index/Product/ProductDetails" component={ProductDetails}/>
+                        <Route path="/index/Product/XiuGaiProduct" component={XiuGaiProduct}/>
                     </Content>
 
                   </Layout>

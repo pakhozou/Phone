@@ -12,4 +12,9 @@ export default {
     delPD:"/goods/admin/GoodsManage/deleteGoods",//删除商品
     getGuiGeList:"/stockservice/stock/selectByTBId",//查询规格
     addProduct:"/goods/admin/GoodsManage/addGoods",//添加商品
+    addGuiGe:"/goods/admin/GoodsManage/updateGoodsAddSpecificatios",//添加规格
+    delGuiGe:"/goods/admin/GoodsManage/updateGoodsDeleteSpecificatios",//删除规格
+    CimgUp:"/goods/admin/GoodsManage/updateGoodsUpdateCover",//修改商品封面图
+    DimgUp:"/goods/admin/GoodsManage/updateGoodsUpdateDetailImg",//修改商品详细图
+    upPDmsg:"/goods/admin/GoodsManage/updateGoods",//修改商品
 }

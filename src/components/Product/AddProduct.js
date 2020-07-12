@@ -145,7 +145,7 @@ class addProduct extends React.Component {
         this.setState({Gtype:e},function () {
             axios.post(ioApi.product.getGuiGeList,{
                 stock_typeid: this.state.Gtype,
-                stock_brandid: this.state.Gpinpai,
+                stock_brandid: this.state.Gpinpai
             } ,{
                 headers:{
                     'Content-Type':'application/json'
@@ -163,13 +163,13 @@ class addProduct extends React.Component {
                     }
                 ]
             }).then((res)=>{
-                console.log(res.data.data);
+                console.log(res);
                 let list = []
                 for(let i = 0;i<res.data.data.length;i++){
                     let addlist ={}
-                    addlist.id=res.data.data[i][0]
-                    addlist.name=res.data.data[i][1]
-                    addlist.num=res.data.data[i][2]
+                    addlist.id=res.data.data[i].stock_id
+                    addlist.name=res.data.data[i].stock_name
+                    addlist.num=res.data.data[i].stock_totalnumber
                     list.push(addlist)
                 }
                 this.setState({
@@ -187,7 +187,7 @@ class addProduct extends React.Component {
         this.setState({Gpinpai:e},function () {
             axios.post(ioApi.product.getGuiGeList,{
                 stock_typeid: this.state.Gtype,
-                stock_brandid: this.state.Gpinpai,
+                stock_brandid: this.state.Gpinpai
             } ,{
                 headers:{
                     'Content-Type':'application/json'
@@ -209,9 +209,9 @@ class addProduct extends React.Component {
                 let list = []
                 for(let i = 0;i<res.data.data.length;i++){
                     let addlist ={}
-                    addlist.id=res.data.data[i][0]
-                    addlist.name=res.data.data[i][1]
-                    addlist.num=res.data.data[i][2]
+                    addlist.id=res.data.data[i].stock_id
+                    addlist.name=res.data.data[i].stock_name
+                    addlist.num=res.data.data[i].stock_totalnumber
                     list.push(addlist)
                 }
                 this.setState({
@@ -350,6 +350,20 @@ class addProduct extends React.Component {
 
 
     }
+    delGui(data,index){
+        console.log(data);
+        console.log(index);
+        let list = [...this.state.guiGeList]
+        list.splice(index,1)
+        // for(let i = 0;i<list.length;i++){
+        //     if(list[i].id === data.id){
+        //         list.splice(i,1)
+        //     }
+        // }
+        this.setState({
+            guiGeList:list
+        })
+    }
 //构造函数
     constructor(props) {
         super(props)
@@ -472,8 +486,8 @@ class addProduct extends React.Component {
             },
             {
                 title: '操作',
-                render:(text) => (
-                    <Button  type="danger">删除</Button>
+                render:(text,record,index) => (
+                    <Button  type="danger" onClick={()=>this.delGui(text,index)}>删除</Button>
                 )
             },
         ];

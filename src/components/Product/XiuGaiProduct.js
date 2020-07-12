@@ -1,6 +1,8 @@
 import React from 'react';  //导入react
-import { Upload, Modal,Row,Col,Input,Select,Button,Table,Switch } from 'antd';
+import { Upload, Modal,Row,Col,Input,Select,Button,Table,Switch,Popconfirm } from 'antd';
 import { PlusOutlined,UnorderedListOutlined,InsertRowAboveOutlined,ProfileOutlined,ShoppingOutlined } from '@ant-design/icons';
+import axios from '../../utils/axios'
+import ioApi from '../../api/index'
 //上传文件
 function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -14,25 +16,18 @@ const { Option } = Select;
 const { TextArea } = Input;
 //xxx 组件名
 class addProduct extends React.Component {
-    chongZhi (){
-        // this.props.refs.pdname.value =""
+    CimgOver=()=>{
         this.setState({
-            ProductName:"",//商品名
-            ProductDetails:"",//商品详情
-            Postage:"",//邮费
-            weight:"",//重量
-            keyword:"",//关键字
-            flashSale:0,//限时抢购
-            HotSale:0,//热销
-            coupon:0,//优惠券
-            fileList1: [],//商品封面图
-            fileList2: [],//商品详情图
-            guiGeList:[],//规格表
-            fenLei:"",//分类
-            pingPai:"",//品牌
+            CimgModal:false,
+            fileList1:[]
         })
     }
-
+    DimgOver=()=>{
+        this.setState({
+            DimgModal:false,
+            fileList2:[]
+        })
+    }
 
 
     ProductName(e){
@@ -60,7 +55,16 @@ class addProduct extends React.Component {
             keyword:e.target.value
         })
     }
-
+    Gname(e){
+        this.setState({
+            specificationsName:e.target.value
+        })
+    }
+    price(e){
+        this.setState({
+            price:e.target.value
+        })
+    }
 
 
 
@@ -120,12 +124,103 @@ class addProduct extends React.Component {
     //获取类型事件
     getType = (e) =>{
         console.log(e);
-        this.setState({fenLei:e})
+        this.setState({goodsTypeId:e})
     }
     //获取品牌事件
     getPingPai = (e)=>{
         console.log(e);
-        this.setState({pingPai:e})
+        this.setState({goodBrandId:e})
+    }
+    //获取规格类型id
+    getGtype(e){
+        this.setState({Gtype:e},function () {
+            axios.post(ioApi.product.getGuiGeList,{
+                stock_typeid: this.state.Gtype,
+                stock_brandid: this.state.Gpinpai
+            } ,{
+                headers:{
+                    'Content-Type':'application/json'
+                }
+            },{
+                transformRequest:[
+                    function(data){
+                        let params = "";
+                        var arr = [];
+                        for(var key in data){
+                            arr.push(key+"="+data[key]);
+                        }
+                        params = arr.join("&");
+                        return params;
+                    }
+                ]
+            }).then((res)=>{
+                console.log(res);
+                let list = []
+                for(let i = 0;i<res.data.data.length;i++){
+                    let addlist ={}
+                    addlist.id=res.data.data[i].stock_id
+                    addlist.name=res.data.data[i].stock_name
+                    addlist.num=res.data.data[i].stock_totalnumber
+                    list.push(addlist)
+                }
+                this.setState({
+                    guiGeiList:list
+                },function () {
+                    this.setState({
+                        //渲染下拉框
+                        guiGeiListXuanRan:this.state.guiGeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>})
+                    })
+                })
+            })
+        })
+    }
+    getGpinPai(e){
+        this.setState({Gpinpai:e},function () {
+            axios.post(ioApi.product.getGuiGeList,{
+                stock_typeid: this.state.Gtype,
+                stock_brandid: this.state.Gpinpai
+            } ,{
+                headers:{
+                    'Content-Type':'application/json'
+                }
+            },{
+                transformRequest:[
+                    function(data){
+                        let params = "";
+                        var arr = [];
+                        for(var key in data){
+                            arr.push(key+"="+data[key]);
+                        }
+                        params = arr.join("&");
+                        return params;
+                    }
+                ]
+            }).then((res)=>{
+                console.log(res.data.data);
+                let list = []
+                for(let i = 0;i<res.data.data.length;i++){
+                    let addlist ={}
+                    addlist.id=res.data.data[i].stock_id
+                    addlist.name=res.data.data[i].stock_name
+                    addlist.num=res.data.data[i].stock_totalnumber
+                    list.push(addlist)
+                }
+                this.setState({
+                    guiGeiList:list
+                },function () {
+                    console.log(this.state.guiGeiList);
+                    this.setState({
+                        //渲染下拉框
+                        guiGeiListXuanRan:this.state.guiGeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>})
+                    })
+                })
+            })
+        })
+    }
+    getGid(e){
+        this.setState({
+            Gid:e
+        })
     }
     //是否抢购
     isQiangGou(){
@@ -154,10 +249,185 @@ class addProduct extends React.Component {
             this.setState({coupon:0})
         }
     }
+    GaddOKcg=()=>{
+        console.log("ok");
+        // let list = [...this.state.guiGeList]
+        let addObj = {}
+        let id =this.state.Gid
+        // let num
+        // for(let i = 0;i<this.state.guiGeiList.length;i++){
+        //     if(this.state.guiGeiList[i].id === id){
+        //         num = this.state.guiGeiList[i].num
+        //     }
+        // }
+        addObj.goodsId = this.state.id
+        addObj.specificationsName = this.state.specificationsName
+        addObj.salesPrice= parseFloat(this.state.price)
+        addObj.stockId = id
+
+        console.log(addObj);
+        axios.post(ioApi.product.addGuiGe,addObj,{
+            headers:{
+                'Content-Type':'application/json'
+            }
+        },{
+            transformRequest:[
+                function(data){
+                    let params = "";
+                    var arr = [];
+                    for(var key in data){
+                        arr.push(key+"="+data[key]);
+                    }
+                    params = arr.join("&");
+                    return params;
+                }
+            ]
+        }).then((res)=>{
+            console.log(res);
+            this.getProductMSG(this.state.id)
+        })
+        // addObj.shuliang = parseFloat(num)
+        // list.push(addObj)
+        this.setState({ guiGeMotai: false })
+
+    }
+    uplod=()=>{
+        console.log(6);
+        let goodsId = this.state.id
+        let goodBrandId = this.state.goodBrandId //品牌ID
+        let goodsFlag = this.state.keyword.split("、")//关键字
+        let goodsFreight = parseFloat(this.state.Postage)
+        let goodsIntroduce = this.state.ProductDetails
+        let goodsIsHot = this.state.HotSale
+        let goodsIsRush = this.state.flashSale
+        let goodsIscoupon = this.state.coupon
+        let goodsName = this.state.ProductName
+        let goodsStatue = 1
+        let goodsTypeId = this.state.goodsTypeId
+        let goodsWeight = parseFloat(this.state.weight)
+        let specificationsList=[]
+
+        for(let z =0;z<this.state.guiGeList.length;z++){
+            let guiPa={}
+            guiPa.price = this.state.guiGeList[z].salesPrice
+            guiPa.specificationsName = this.state.guiGeList[z].specificationsName
+            guiPa.stockId = this.state.guiGeList[z].specificationsId
+            specificationsList.push(guiPa)
+        }
+        let upObj = {
+            goodsId,
+            goodBrandId,
+            goodsFlag,
+            goodsFreight,
+            goodsIntroduce,
+            goodsIsHot,
+            goodsIsRush,
+            goodsIscoupon,
+            goodsName,
+            goodsStatue,
+            goodsTypeId,
+            goodsWeight
+        }
+        axios.post(ioApi.product.upPDmsg,upObj,{
+            headers:{
+                'Content-Type':'application/json'
+            }
+        },{
+            transformRequest:[
+                function(data){
+                    let params = "";
+                    var arr = [];
+                    for(var key in data){
+                        arr.push(key+"="+data[key]);
+                    }
+                    params = arr.join("&");
+                    return params;
+                }
+            ]
+        }).then((res)=>{
+            console.log(res);
+        })
+        console.log(upObj);
+
+    }
+    delGui(data,index){
+        console.log(data.specificationsId);
+        axios.post(ioApi.product.delGuiGe,
+            {
+                SpecificationsId:data.specificationsId
+            },{
+                transformRequest:[
+                    function(data){
+                        let params = "";
+                        var arr = [];
+                        for(var key in data){
+                            arr.push(key+"="+data[key]);
+                        }
+                        params = arr.join("&");
+                        return params;
+                    }
+                ]
+            }).then((res)=>{
+            console.log(res);
+            this.getProductMSG(this.state.id)
+        })
+
+        // console.log(index);
+        // let list = [...this.state.guiGeList]
+        // list.splice(index,1)
+        // for(let i = 0;i<list.length;i++){
+        //     if(list[i].id === data.id){
+        //         list.splice(i,1)
+        //     }
+        // }
+        // this.setState({
+        //     guiGeList:list
+        // })
+    }
+
+
+    CimgAdd=()=>{
+        console.log(this.state.fileList1[0].response.msg);
+        let obj = {
+            goodscoverId:this.state.FimgID,
+            goodsId:this.state.id,
+            img:this.state.fileList1[0].response.msg
+        }
+        console.log(obj);
+        axios.post(ioApi.product.CimgUp,obj,{
+            headers:{
+                'Content-Type':'application/json'
+            }
+        }).then((res)=>{
+            console.log(res);
+            this.setState({
+                CimgModal:false,
+            })
+            this.getProductMSG(this.state.id)
+        })
+
+    }
+    DimgAdd=()=>{
+        console.log(this.state.fileList2);
+        let obj = {
+            detailimgId:this.state.XimgID,
+            goodsId:this.state.id,
+            img:this.state.fileList2[0].response.msg
+        }
+        axios.post(ioApi.product.DimgUp,obj).then((res)=>{
+            console.log(res);
+            this.setState({
+                DimgModal:false,
+            })
+            this.getProductMSG(this.state.id)
+        })
+    }
 //构造函数
     constructor(props) {
         super(props)
         this.state = {
+            fenL:"",
+            pinL:"",
             previewVisible1: false,
             previewImage1: '',
             previewTitle1: '',
@@ -168,6 +438,8 @@ class addProduct extends React.Component {
 
 
             ProductName:"",//商品名
+            goodsTypeId:"",//分类ID
+            goodBrandId:"",//品牌id
             ProductDetails:"",//商品详情
             Postage:"",//邮费
             weight:"",//重量
@@ -175,59 +447,170 @@ class addProduct extends React.Component {
             flashSale:0,//限时抢购
             HotSale:0,//热销
             coupon:0,//优惠券
+            upGuiGe:[],//上传规格
+
+
+
             fileList1: [],//商品封面
             fileList2: [],//商品详情图
 
+
+
+
+            price:"",//规格价格
+            specificationsName:"",//规格名
+            stockId:"",//库存ID
+
+
+            Gtype:"",//规格分类ID
+            Gpinpai:"",//规格品牌id
+            Gid:"",//规格id
+
             //规格表数据
-            guiGeList:[
-                {
-                    name:"华为数据线1.5M",
-                    shoujia:35,
-                    kucunID:23,
-                    shuliang:91
-                },
-                {
-                    name:"华为数据线2M",
-                    shoujia:30,
-                    kucunID:4,
-                    shuliang:52
-                },
-                {
-                    name:"华为数据线1M",
-                    shoujia:20,
-                    kucunID:7,
-                    shuliang:982
-                },
-            ],
+            guiGeList:[],
             //分类数据
-            fenLeiList:[
-                {id:1,name:"数据线"},
-                {id:2,name:"手机壳"},
-                {id:3,name:"钢化膜"},
-            ],
             fenLeiListXuanRan:[],
             //品牌数据
-            pingPaiList:[
-                {id:1,name:"华为"},
-                {id:2,name:"苹果"},
-                {id:3,name:"小米"}
-            ],
             pingPaiListXuanRan:[],
             //规格数据
             guiGeiList:[
-                {id:1,name:"c型数据线1.5米"},
-                {id:2,name:"苹果X手机钢化膜"},
-                {id:3,name:"小米智能音箱"}
+                // {id:1,name:"c型数据线1.5米"},
+                // {id:2,name:"苹果X手机钢化膜"},
+                // {id:3,name:"小米智能音箱"}
             ],
             guiGeiListXuanRan:[],
+            FengMianImg:"",//封面图
+            XiangQing:"",//详情图
+            FimgNum:"",//封面图数量
+            XimgNum:"",//详情图数量
+            FimgID:"",
+            XimgID:"",
+
+            CimgModal:false,
+            DimgModal:false,
         }
+        this.getProductMSG = this.getProductMSG.bind(this)
     }
-    componentWillMount(){
+
+    updataCimg(msg){
+        console.log(msg);
         this.setState({
-            //渲染下拉框
-            pingPaiListXuanRan:this.state.pingPaiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>}),
-            fenLeiListXuanRan:this.state.fenLeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>}),
-            guiGeiListXuanRan:this.state.guiGeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>})
+            FimgID:msg,
+            CimgModal:true
+        })
+    }
+    updataDimg(msg){
+        console.log(msg);
+        this.setState({
+            XimgID:msg,
+            DimgModal:true
+        })
+    }
+
+    getProductMSG(thisId){
+        axios.post(ioApi.product.ProductById,{
+            GoodsId:thisId
+        }, {
+            transformRequest:[
+                function(data){
+                    let params = "";
+                    var arr = [];
+                    for(var key in data){
+                        arr.push(key+"="+data[key]);
+                    }
+                    params = arr.join("&");
+                    return params;
+                }
+            ]
+        }).then((res)=>{
+            let that = this
+            console.log(res.data.data);
+            let msg = res.data.data
+            let k = []
+            for(let i=0;i<msg.goodsFlag.length;i++){
+                k.push(msg.goodsFlag[i].flagName)
+            }
+            let t
+            for (let x=0;x<this.state.fenL.length;x++){
+                if(this.state.fenL[x].goodsType_name === msg.goodsTypeName){
+                    t = this.state.fenL[x].goodsType_id
+                }
+            }
+            let p
+            for (let x=0;x<this.state.pinL.length;x++){
+                if(this.state.pinL[x].goodsBrand_name === msg.goodBrandName){
+                    p = this.state.pinL[x].goodsBrand_id
+                }
+            }
+            this.setState({
+                ProductName:msg.goodsName,//商品名
+
+
+                goodsTypeId:t,//类型
+                goodBrandId:p,//品牌
+
+                ProductDetails:msg.goodsIntroduce,//商品详情
+                guiGeList:msg.specifications,//规格表
+                Postage:msg.goodsFreight,//邮费
+                weight:msg.goodsWeight,//重量
+                keyword:k.join("、"),//关键字
+                flashSale:msg.goodsIsRush,//抢购
+                HotSale:msg.goodsIsHot,//热销
+                coupon:msg.goodsIscoupon,//是否享受优惠券
+                FengMianImg:res.data.data.goodsCoverImg.map(function (itme) {
+                    return <Col span={4}>
+                        <div style={{width:150,height:150,overflow:"hidden"}} onClick={()=>that.updataCimg(itme.goodscoverId)}>
+                            <img src={itme.img} width={150}/>
+                        </div>
+                    </Col>
+                }),//封面图
+                XiangQing:res.data.data.goodsDetailimg.map(function (itme) {
+                    return <Col span={4}>
+                        <div style={{width:150,height:150,overflow:"hidden"}} onClick={()=>that.updataDimg(itme.detailimgId)}>
+                            <img src={itme.img} width={150}/>
+                        </div>
+                    </Col>
+                }),//详情图
+                FimgNum:res.data.data.goodsCoverImg.length,
+                XimgNum:res.data.data.goodsDetailimg.length
+            })
+        })
+    }
+
+
+    //!!!!!!!!!!!!!!!!!挂载前！！！！！！！！！！！！！！！！！！
+    componentWillMount(){
+        let thisId
+        if(this.props.location.query !== undefined){
+            console.log(this.props.location.query.id);
+            this.setState({
+                id:this.props.location.query.id
+            })
+            thisId = this.props.location.query.id
+
+        }
+        else {
+            this.props.history.push("/index/Product/ProductList")
+        }
+
+        axios.post(ioApi.product.theType,{nowsPage:1,pageSize:1000}).then((res)=>{
+            this.setState({
+                //渲染下拉框
+                // pingPaiListXuanRan:this.state.pingPaiList.map(function (item) {return <Option value={item.goodsType_id}>{item.goodsType_name}</Option>}),
+                fenLeiListXuanRan:res.data.data.data.map(function (item) {return <Option value={item.goodsType_id}>{item.goodsType_name}</Option>}),
+                fenL:res.data.data.data
+            },function () {
+                axios.post(ioApi.product.thePingPai,{nowsPage:1,pageSize:1000,remarks:""}).then((res)=>{
+                    console.log(res.data.data.data);
+                    this.setState({
+                        //渲染下拉框
+                        pingPaiListXuanRan:res.data.data.data.map(function (item) {return <Option value={item.goodsBrand_id}>{item.goodsBrand_name}</Option>}),
+                        pinL:res.data.data.data
+                    },function () {
+                        this.getProductMSG(thisId)
+                    })
+                })
+            })
         })
     }
     xianshiMoTi(){
@@ -255,29 +638,36 @@ class addProduct extends React.Component {
         //规格表
         const columns = [
             {
-                title: '库存名',
-                dataIndex: 'name',
-                key: 'name',
+                title: '规格名',
+                dataIndex: 'specificationsName',
+                key: 'specificationsName',
             },
             {
                 title: '规格售价',
-                dataIndex: 'shoujia',
-                key: 'shoujia',
+                dataIndex: 'salesPrice',
+                key: 'salesPrice',
             },
             {
-                title: '对应库存ID',
-                dataIndex: 'kucunID',
-                key: 'kucunID',
+                title: '规格ID',
+                dataIndex: 'specificationsId',
+                key: 'specificationsId',
             },
             {
                 title: '库存数量',
-                key: 'shuliang',
-                dataIndex: 'shuliang',
+                key: 'stockNumber',
+                dataIndex: 'stockNumber',
             },
             {
                 title: '操作',
-                render:(text) => (
+                render:(text,record,index) => (
+                    <Popconfirm
+                        title="你确定删除规格吗？"
+                        okText="确定"
+                        cancelText="取消"
+                        onConfirm={()=>this.delGui(text,index)}
+                    >
                     <Button  type="danger">删除</Button>
+                    </Popconfirm>
                 )
             },
         ];
@@ -296,7 +686,7 @@ class addProduct extends React.Component {
                 <Row style={{marginTop:30}}>
                     <Col span={3} style={{textAlign:"right"}}>商品类型：</Col>
                     <Col>
-                        <Select onChange={this.getType} style={{marginLeft:30,width:500}}>
+                        <Select onChange={this.getType} value={this.state.goodsTypeId} style={{marginLeft:30,width:500}}>
                             {this.state.fenLeiListXuanRan}
                         </Select>
                     </Col>
@@ -304,7 +694,7 @@ class addProduct extends React.Component {
                 <Row style={{marginTop:30}}>
                     <Col span={3} style={{textAlign:"right"}}>商品品牌：</Col>
                     <Col>
-                        <Select onChange={this.getPingPai} style={{marginLeft:30,width:500}}>
+                        <Select onChange={this.getPingPai} value={this.state.goodBrandId} style={{marginLeft:30,width:500}}>
                             {this.state.pingPaiListXuanRan}
                         </Select>
                     </Col>
@@ -336,48 +726,19 @@ class addProduct extends React.Component {
                 </Row>
                 <Row style={{marginTop:30}}>
                     <Col span={3} style={{textAlign:"right"}}>添加商品图：</Col>
-                    <Col style={{marginLeft:30}}>
-                        <Upload
-                            action="http://111.229.83.241:9601/user/file/upload"
-                            listType="picture-card"
-                            fileList={fileList1}
-                            onPreview={this.handlePreview1}
-                            onChange={this.handleChange1}
-                            onRemove={this.removeImg1}
-                        >
-                            {fileList1.length >= 4 ? null : uploadButton}
-                        </Upload>
-                        <Modal
-                            visible={previewVisible1}
-                            title={previewTitle1}
-                            footer={null}
-                            onCancel={this.handleCancel1}
-                        >
-                            <img alt="example" style={{ width: '100%' }} src={previewImage1} />
-                        </Modal>
+                    <Col style={{marginLeft:30}} span={20}>
+                        <Row>
+                            {this.state.FengMianImg}
+                        </Row>
                     </Col>
                 </Row>
                 <Row style={{marginTop:30}}>
                     <Col span={3} style={{textAlign:"right"}}>添加商品详情图：</Col>
-                    <Col style={{marginLeft:30}}>
-                        <Upload
-                            action="http://111.229.83.241:9601/user/file/upload"
-                            listType="picture-card"
-                            fileList={fileList2}
-                            onPreview={this.handlePreview2}
-                            onChange={this.handleChange2}
-                            onRemove={this.removeImg2}
-                        >
-                            {fileList2.length >= 4 ? null : uploadButton}
-                        </Upload>
-                        <Modal
-                            visible={previewVisible2}
-                            title={previewTitle2}
-                            footer={null}
-                            onCancel={this.handleCancel2}
-                        >
-                            <img alt="example" style={{ width: '100%' }} src={previewImage2} />
-                        </Modal>
+                    <Col style={{marginLeft:30}} span={20}>
+                       <Row>
+                           {this.state.XiangQing}
+
+                       </Row>
                     </Col>
                 </Row>
                 <Row style={{marginTop:30}}>
@@ -410,29 +771,28 @@ class addProduct extends React.Component {
                     <Col style={{marginLeft:30}}><Switch checked={this.state.coupon} onClick={this.isYouHui.bind(this)} /></Col>
                 </Row>
                 <Row style={{marginTop:10}}>
-                    <Col span={2} offset={10}><Button type="primary">提交</Button></Col>
-                    <Col><Button onClick={this.chongZhi.bind(this)}>重置</Button></Col>
+                    <Col span={2} offset={10}><Button type="primary" onClick={this.uplod.bind(this)}>提交</Button></Col>
                 </Row>
                 <Modal
                     title="添加规格"
                     visible={this.state.guiGeMotai}
-                    onOk={this.handleOk}
+                    onOk={this.GaddOKcg}
                     onCancel={this.guanBiGuiGe}
                     okText="确认"
                     cancelText="取消"
                 >
                     <Row>
                         <Col span={5} style={{textAlign:"right" ,lineHeight:"32px"}}>规格名：</Col>
-                        <Col span={16}><Input placeholder="规格名" style={{width:200}}/></Col>
+                        <Col span={16}><Input placeholder="规格名" onChange={this.Gname.bind(this)} value={this.state.specificationsName} style={{width:200}}/></Col>
                     </Row>
                     <Row style={{marginTop:30}}>
                         <Col span={5} style={{textAlign:"right",lineHeight:"32px"}}>售价：</Col>
-                        <Col span={16}><Input placeholder="售价" style={{width:200}}/></Col>
+                        <Col span={16}><Input placeholder="售价" onChange={this.price.bind(this)} value={this.state.price} style={{width:200}}/></Col>
                     </Row>
                     <Row style={{marginTop:30}}>
                         <Col span={5} style={{textAlign:"right",lineHeight:"26px"}}>选择库存分类：</Col>
                         <Col span={16}>
-                            <Select onChange={this.getType} style={{width:200}}>
+                            <Select onChange={this.getGtype.bind(this)} value={this.state.Gtype} style={{width:200}}>
                                 {this.state.fenLeiListXuanRan}
                             </Select>
                         </Col>
@@ -440,7 +800,7 @@ class addProduct extends React.Component {
                     <Row style={{marginTop:30}}>
                         <Col span={5} style={{textAlign:"right",lineHeight:"26px"}}>选择库存品牌：</Col>
                         <Col span={16}>
-                            <Select onChange={this.getPingPai} style={{width:200}}>
+                            <Select onChange={this.getGpinPai.bind(this)} value={this.state.Gpinpai} style={{width:200}}>
                                 {this.state.pingPaiListXuanRan}
                             </Select>
                         </Col>
@@ -448,13 +808,84 @@ class addProduct extends React.Component {
                     <Row style={{marginTop:30}}>
                         <Col span={5} style={{textAlign:"right",lineHeight:"26px"}}>选择库存货物：</Col>
                         <Col span={16}>
-                            <Select onChange={this.getPingPai} style={{width:200}}>
+                            <Select onChange={this.getGid.bind(this)} value={this.state.Gid} style={{width:200}}>
                                 {this.state.guiGeiListXuanRan}
                             </Select>
                         </Col>
                     </Row>
                 </Modal>
+
+
+
+
+
+                <Modal
+                    title="重新上传商品封面图"
+                    visible={this.state.CimgModal}
+                    onOk={this.CimgAdd}
+                    onCancel={this.CimgOver}
+                    okText="确认"
+                    cancelText="取消"
+                >
+                    <Upload
+                        action="http://111.229.83.241:9601/user/file/upload"
+                        listType="picture-card"
+                        fileList={fileList1}
+                        onPreview={this.handlePreview1}
+                        onChange={this.handleChange1}
+                        onRemove={this.removeImg1}
+                    >
+                        {fileList1.length >= 1 ? null : uploadButton}
+                    </Upload>
+                    <Modal
+                        visible={previewVisible1}
+                        title={previewTitle1}
+                        footer={null}
+                        onCancel={this.handleCancel1}
+                    >
+                        <img alt="example" style={{ width: '100%' }} src={previewImage1} />
+                    </Modal>
+                </Modal>
+
+
+
+                <Modal
+                    title="重新上传商品详情图"
+                    visible={this.state.DimgModal}
+                    onOk={this.DimgAdd}
+                    onCancel={this.DimgOver}
+                    okText="确认"
+                    cancelText="取消"
+                >
+                    <Upload
+                        action="http://111.229.83.241:9601/user/file/upload"
+                        listType="picture-card"
+                        fileList={fileList2}
+                        onPreview={this.handlePreview2}
+                        onChange={this.handleChange2}
+                        onRemove={this.removeImg2}
+                    >
+                        {fileList2.length >= 1 ? null : uploadButton}
+                    </Upload>
+                    <Modal
+                        visible={previewVisible2}
+                        title={previewTitle2}
+                        footer={null}
+                        onCancel={this.handleCancel2}
+                    >
+                        <img alt="example" style={{ width: '100%' }} src={previewImage2} />
+                    </Modal>
+                </Modal>
             </div>
+
+
+
+
+
+
+
+
+
         )
     }
 }
