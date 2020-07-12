@@ -276,7 +276,7 @@ class userRole {
           // console.log('获取menu');
           // console.log(res.data.data);
           this.menu = res.data.data;
-          // localStorage.setItem('menu',JSON.stringify(this.menu))
+          localStorage.setItem('menu',JSON.stringify(this.menu))
         })
       ).then((res) => {
 

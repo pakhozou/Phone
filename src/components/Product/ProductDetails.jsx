@@ -10,15 +10,42 @@ const { RangePicker } = DatePicker;
 class ProductDetails extends React.Component {
 //渲染
     state = { visible: false };
-    showModal = () => {
+    showModal = (data) => {
         this.setState({
             visible: true,
+            nowGuiGeId:data.specificationsId
         });
     };
     handleOk = e => {
         console.log(e);
+        axios.post(ioApi.product.openTeJia,{
+            SpecificationsId:this.state.nowGuiGeId,
+            endtime:this.state.teTime,
+            isCoupon:this.state.youHui,
+            isPrice:1,
+            price:this.state.teJiaJinEr
+        }, {
+            transformRequest:[
+                function(data){
+                    let params = "";
+                    var arr = [];
+                    for(var key in data){
+                        arr.push(key+"="+data[key]);
+                    }
+                    params = arr.join("&");
+                    return params;
+                }
+            ]
+        }).then((res)=>{
+            console.log(res);
+            this.initDate(this.state.id)
+        })
         this.setState({
             visible: false,
+            teTime:"",
+            teJiaJinEr:"",
+            youHui:0,
+            nowGuiGeId:""
         });
     };
     handleCancel = e => {
@@ -33,16 +60,37 @@ class ProductDetails extends React.Component {
                 title="你确定关闭特价吗？"
                 okText="确定"
                 cancelText="取消"
+                onConfirm={()=>this.closeTeJia(data)}
             >
             <Button danger>关闭特价</Button>
             </Popconfirm>
         }
         else {
-            return <Button type="primary" onClick={this.showModal}>开启特价</Button>
+            return <Button type="primary" onClick={()=>this.showModal(data)}>开启特价</Button>
         }
     };
     back(){
         this.props.history.go(-1)
+    }
+    closeTeJia(data){
+        axios.post(ioApi.product.closeTeJia,{
+            SpecificationsId:data.specificationsId
+        }, {
+            transformRequest:[
+                function(data){
+                    let params = "";
+                    var arr = [];
+                    for(var key in data){
+                        arr.push(key+"="+data[key]);
+                    }
+                    params = arr.join("&");
+                    return params;
+                }
+            ]
+        }).then((res)=>{
+            console.log(res);
+            this.initDate(this.state.id)
+        })
     }
     constructor(props){
         super(props)
@@ -57,7 +105,11 @@ class ProductDetails extends React.Component {
             qiangGou:"",
             youHuiQuan:"",
             guanJianZi:'',
-            GuiGeList:""
+            GuiGeList:"",
+            teTime:"",
+            teJiaJinEr:"",
+            youHui:0,
+            nowGuiGeId:""
         }
     }
     componentWillMount(){
@@ -67,95 +119,97 @@ class ProductDetails extends React.Component {
                 id:this.props.location.query.id
             })
             let thisId = this.props.location.query.id
-            axios.post(ioApi.product.ProductById,{
-                GoodsId:thisId
-            }, {
-                transformRequest:[
-                    function(data){
-                        let params = "";
-                        var arr = [];
-                        for(var key in data){
-                            arr.push(key+"="+data[key]);
-                        }
-                        params = arr.join("&");
-                        return params;
-                    }
-                ]
-            }).then((res)=>{
-                console.log(res);
-                if(res.data.data.goodsFlag.length>0
-                ){
-                    this.getGuanJianZi(res.data.data.goodsFlag)
-                }
-                if(res.data.data.specifications !== undefined){
-                    this.guiGeGuoLi(res.data.data.specifications)
-                }
-
-                this.setState({
-                    GuiGeList:res.data.data.specifications,
-                    productMsg:res.data.data,
-                    FengMianImg:res.data.data.goodsCoverImg.map(function (itme) {
-                        return <Col span={5}>
-                            <div style={{width:240,height:240,overflow:"hidden"}}>
-                                <img src={itme.img} width={240}/>
-                            </div>
-                        </Col>
-                    }),
-                    XiangQing:res.data.data.goodsDetailimg.map(function (itme) {
-                        return <Col span={5}>
-                            <div style={{width:240,height:240,overflow:"hidden"}}>
-                                <img src={itme.img} width={240}/>
-                            </div>
-                        </Col>
-                    }),
-                },function () {
-                    if(res.data.data.goodsStatue === 1){
-                        this.setState({
-                            zhuangTai:"上架中"
-                        })
-                    }
-                    else{
-                        this.setState({
-                            zhuangTai:"已下架"
-                        })
-                    }
-                    if(res.data.data.goodsIsHot === 1){
-                        this.setState({
-                            reXiao:"是"
-                        })
-                    }
-                    else{
-                        this.setState({
-                            reXiao:"否"
-                        })
-                    }
-                    if(res.data.data.goodsIsRush === 1){
-                        this.setState({
-                            qiangGou:"是"
-                        })
-                    }
-                    else{
-                        this.setState({
-                            qiangGou:"否"
-                        })
-                    }
-                    if(res.data.data.goodsIscoupon === 1){
-                        this.setState({
-                            youHuiQuan:"是"
-                        })
-                    }
-                    else{
-                        this.setState({
-                            youHuiQuan:"否"
-                        })
-                    }
-                })
-            })
+            this.initDate(thisId)
         }
         else {
             this.props.history.push("/index/Product/ProductList")
         }
 
+    }
+    initDate(thisId){
+        axios.post(ioApi.product.ProductById,{
+            GoodsId:thisId
+        }, {
+            transformRequest:[
+                function(data){
+                    let params = "";
+                    var arr = [];
+                    for(var key in data){
+                        arr.push(key+"="+data[key]);
+                    }
+                    params = arr.join("&");
+                    return params;
+                }
+            ]
+        }).then((res)=>{
+            console.log(res);
+            if(res.data.data.goodsFlag.length>0&&res.data.data.goodsFlag!==undefined){
+                this.getGuanJianZi(res.data.data.goodsFlag)
+            }
+            if(res.data.data.specifications !== undefined){
+                this.guiGeGuoLi(res.data.data.specifications)
+            }
+
+            this.setState({
+                GuiGeList:res.data.data.specifications,
+                productMsg:res.data.data,
+                FengMianImg:res.data.data.goodsCoverImg.map(function (itme) {
+                    return <Col span={5}>
+                        <div style={{width:240,height:240,overflow:"hidden"}}>
+                            <img src={itme.img} width={240}/>
+                        </div>
+                    </Col>
+                }),
+                XiangQing:res.data.data.goodsDetailimg.map(function (itme) {
+                    return <Col span={5}>
+                        <div style={{width:240,height:240,overflow:"hidden"}}>
+                            <img src={itme.img} width={240}/>
+                        </div>
+                    </Col>
+                }),
+            },function () {
+                if(res.data.data.goodsStatue === 1){
+                    this.setState({
+                        zhuangTai:"上架中"
+                    })
+                }
+                else{
+                    this.setState({
+                        zhuangTai:"已下架"
+                    })
+                }
+                if(res.data.data.goodsIsHot === 1){
+                    this.setState({
+                        reXiao:"是"
+                    })
+                }
+                else{
+                    this.setState({
+                        reXiao:"否"
+                    })
+                }
+                if(res.data.data.goodsIsRush === 1){
+                    this.setState({
+                        qiangGou:"是"
+                    })
+                }
+                else{
+                    this.setState({
+                        qiangGou:"否"
+                    })
+                }
+                if(res.data.data.goodsIscoupon === 1){
+                    this.setState({
+                        youHuiQuan:"是"
+                    })
+                }
+                else{
+                    this.setState({
+                        youHuiQuan:"否"
+                    })
+                }
+            })
+        })
     }
     dateFormat (value) {
         if (value === null) {
@@ -174,6 +228,27 @@ class ProductDetails extends React.Component {
             let s = date.getSeconds();// 秒
             s = s < 10 ? ('0' + s) : s;
             return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s;
+        }
+    }
+    teJiaJinEr(e){
+        this.setState({
+            teJiaJinEr:e.target.value
+        })
+    }
+    youHui(){
+        if(this.state.youHui ===0){
+            this.setState({
+                youHui:1
+            },function () {
+                console.log(this.state.youHui);
+            })
+        }
+        else {
+            this.setState({
+                youHui:0
+            },function () {
+                console.log(this.state.youHui);
+            })
         }
     }
     guiGeGuoLi(list){
@@ -205,36 +280,6 @@ class ProductDetails extends React.Component {
         })
     }
     render() {
-
-        const data = [
-            {
-                id: 1,
-                name: '1.5米数据线',
-                shouJia: 20,
-                kuChun: 10086,
-                tejia:12,
-                daoqi:"2020-8-10",
-                iste:true
-            },
-            {
-                id: 2,
-                name: '2米数据线',
-                shouJia: 22,
-                kuChun: 10086,
-                tejia:"无",
-                daoqi:"无",
-                iste:false
-            },
-            {
-                id: 3,
-                name: '3米数据线',
-                shouJia: 25,
-                kuChun: 10086,
-                tejia:"无",
-                daoqi:"无",
-                iste:false
-            },
-        ];
         const columns = [
             {
                 title: '规格id',
@@ -274,8 +319,9 @@ class ProductDetails extends React.Component {
             },
         ];
         function onChange(value, dateString) {
-            console.log('Selected Time: ', value);
-            console.log('Formatted Selected Time: ', dateString);
+            this.setState({
+                teTime:dateString
+            })
         }
 
         function onOk(value) {
@@ -333,15 +379,15 @@ class ProductDetails extends React.Component {
                 >
                     <Row>
                         <Col span={5} style={{textAlign:"right" ,lineHeight:"32px"}}>特价金额：</Col>
-                        <Col span={16}><Input placeholder="特价金额" style={{width:200}}/></Col>
+                        <Col span={16}><Input  onChange={this.teJiaJinEr.bind(this)} value={this.state.teJiaJinEr} placeholder="特价金额" style={{width:200}}/></Col>
                     </Row>
                     <Row style={{marginTop:30}}>
                         <Col span={5} style={{textAlign:"right",lineHeight:"32px"}}>到期时间：</Col>
-                        <Col span={16}><DatePicker showTime onChange={onChange} onOk={onOk} style={{width:200}} /></Col>
+                        <Col span={16}><DatePicker showTime onChange={onChange.bind(this)} onOk={onOk} style={{width:200}} /></Col>
                     </Row>
                     <Row style={{marginTop:30}}>
                         <Col span={5} style={{textAlign:"right",lineHeight:"26px"}}>享受优惠券：</Col>
-                        <Col span={16}><Switch defaultChecked  /></Col>
+                        <Col span={16}> <Switch onChange={this.youHui.bind(this)} /></Col>
                     </Row>
                 </Modal>
             </div>

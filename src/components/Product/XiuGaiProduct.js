@@ -1,8 +1,6 @@
 import React from 'react';  //导入react
 import { Upload, Modal,Row,Col,Input,Select,Button,Table,Switch } from 'antd';
 import { PlusOutlined,UnorderedListOutlined,InsertRowAboveOutlined,ProfileOutlined,ShoppingOutlined } from '@ant-design/icons';
-import axios from '../../utils/axios'
-import ioApi from '../../api/index'
 //上传文件
 function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -32,8 +30,6 @@ class addProduct extends React.Component {
             guiGeList:[],//规格表
             fenLei:"",//分类
             pingPai:"",//品牌
-            goodBrandId:"",
-            goodsTypeId:"",
         })
     }
 
@@ -64,16 +60,7 @@ class addProduct extends React.Component {
             keyword:e.target.value
         })
     }
-    Gname(e){
-        this.setState({
-            specificationsName:e.target.value
-        })
-    }
-    price(e){
-        this.setState({
-            price:e.target.value
-        })
-    }
+
 
 
 
@@ -133,103 +120,12 @@ class addProduct extends React.Component {
     //获取类型事件
     getType = (e) =>{
         console.log(e);
-        this.setState({goodsTypeId:e})
+        this.setState({fenLei:e})
     }
     //获取品牌事件
     getPingPai = (e)=>{
         console.log(e);
-        this.setState({goodBrandId:e})
-    }
-    //获取规格类型id
-    getGtype(e){
-        this.setState({Gtype:e},function () {
-            axios.post(ioApi.product.getGuiGeList,{
-                stock_typeid: this.state.Gtype,
-                stock_brandid: this.state.Gpinpai,
-            } ,{
-                headers:{
-                    'Content-Type':'application/json'
-                }
-            },{
-                transformRequest:[
-                    function(data){
-                        let params = "";
-                        var arr = [];
-                        for(var key in data){
-                            arr.push(key+"="+data[key]);
-                        }
-                        params = arr.join("&");
-                        return params;
-                    }
-                ]
-            }).then((res)=>{
-                console.log(res.data.data);
-                let list = []
-                for(let i = 0;i<res.data.data.length;i++){
-                    let addlist ={}
-                    addlist.id=res.data.data[i][0]
-                    addlist.name=res.data.data[i][1]
-                    addlist.num=res.data.data[i][2]
-                    list.push(addlist)
-                }
-                this.setState({
-                    guiGeiList:list
-                },function () {
-                    this.setState({
-                        //渲染下拉框
-                        guiGeiListXuanRan:this.state.guiGeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>})
-                    })
-                })
-            })
-        })
-    }
-    getGpinPai(e){
-        this.setState({Gpinpai:e},function () {
-            axios.post(ioApi.product.getGuiGeList,{
-                stock_typeid: this.state.Gtype,
-                stock_brandid: this.state.Gpinpai,
-            } ,{
-                headers:{
-                    'Content-Type':'application/json'
-                }
-            },{
-                transformRequest:[
-                    function(data){
-                        let params = "";
-                        var arr = [];
-                        for(var key in data){
-                            arr.push(key+"="+data[key]);
-                        }
-                        params = arr.join("&");
-                        return params;
-                    }
-                ]
-            }).then((res)=>{
-                console.log(res.data.data);
-                let list = []
-                for(let i = 0;i<res.data.data.length;i++){
-                    let addlist ={}
-                    addlist.id=res.data.data[i][0]
-                    addlist.name=res.data.data[i][1]
-                    addlist.num=res.data.data[i][2]
-                    list.push(addlist)
-                }
-                this.setState({
-                    guiGeiList:list
-                },function () {
-                    console.log(this.state.guiGeiList);
-                    this.setState({
-                        //渲染下拉框
-                        guiGeiListXuanRan:this.state.guiGeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>})
-                    })
-                })
-            })
-        })
-    }
-    getGid(e){
-        this.setState({
-            Gid:e
-        })
+        this.setState({pingPai:e})
     }
     //是否抢购
     isQiangGou(){
@@ -258,98 +154,6 @@ class addProduct extends React.Component {
             this.setState({coupon:0})
         }
     }
-    GaddOKcg=()=>{
-        console.log("ok");
-        let list = [...this.state.guiGeList]
-        let addObj = {}
-        let id =this.state.Gid
-        let num
-        for(let i = 0;i<this.state.guiGeiList.length;i++){
-            if(this.state.guiGeiList[i].id === id){
-                num = this.state.guiGeiList[i].num
-            }
-        }
-        addObj.name = this.state.specificationsName
-        addObj.shoujia= parseFloat(this.state.price)
-        addObj.kucunID = id
-        addObj.shuliang = parseFloat(num)
-        list.push(addObj)
-        this.setState({guiGeList:list, guiGeMotai: false })
-
-    }
-    uplod=()=>{
-        console.log(6);
-        let goodBrandId = this.state.goodBrandId //品牌ID
-        let goodsCoverImg=[]//封面图
-        let goodsDetailimg=[]//详细图
-        let goodsFlag = this.state.keyword.split("、")//关键字
-        let goodsFreight = this.state.Postage
-        let goodsIntroduce = this.state.ProductDetails
-        let goodsIsHot = this.state.HotSale
-        let goodsIsRush = this.state.flashSale
-        let goodsIscoupon = this.state.coupon
-        let goodsName = this.state.ProductName
-        let goodsStatue = 1
-        let goodsTypeId = this.state.goodsTypeId
-        let goodsWeight = this.state.weight
-        let specificationsList=[]
-
-        let CimgList = []
-        for(let i =0;i<this.state.fileList1.length;i++){
-            CimgList.push(this.state.fileList1[i].response.msg)
-        }
-        goodsCoverImg =CimgList
-        let DimgList = []
-        for(let x =0;x<this.state.fileList2.length;x++){
-            DimgList.push(this.state.fileList2[x].response.msg)
-        }
-        goodsDetailimg = DimgList
-        for(let z =0;z<this.state.guiGeList.length;z++){
-            let guiPa={}
-            guiPa.price = this.state.guiGeList[z].shoujia
-            guiPa.specificationsName = this.state.guiGeList[z].name
-            guiPa.stockId = this.state.guiGeList[z].kucunID
-            specificationsList.push(guiPa)
-        }
-        let upObj = {
-            goodBrandId,
-            goodsCoverImg,
-            goodsDetailimg,
-            goodsFlag,
-            goodsFreight,
-            goodsIntroduce,
-            goodsIsHot,
-            goodsIsRush,
-            goodsIscoupon,
-            goodsName,
-            goodsStatue,
-            goodsTypeId,
-            goodsWeight,
-            specificationsList
-        }
-        axios.post(ioApi.product.addProduct,upObj,{
-            headers:{
-                'Content-Type':'application/json'
-            }
-        },{
-            transformRequest:[
-                function(data){
-                    let params = "";
-                    var arr = [];
-                    for(var key in data){
-                        arr.push(key+"="+data[key]);
-                    }
-                    params = arr.join("&");
-                    return params;
-                }
-            ]
-        }).then((res)=>{
-            console.log(res);
-        })
-        console.log(upObj);
-
-
-    }
 //构造函数
     constructor(props) {
         super(props)
@@ -364,8 +168,6 @@ class addProduct extends React.Component {
 
 
             ProductName:"",//商品名
-            goodsTypeId:"",//分类ID
-            goodBrandId:"",//品牌id
             ProductDetails:"",//商品详情
             Postage:"",//邮费
             weight:"",//重量
@@ -373,58 +175,60 @@ class addProduct extends React.Component {
             flashSale:0,//限时抢购
             HotSale:0,//热销
             coupon:0,//优惠券
-            upGuiGe:[],//上传规格
-
-
-
             fileList1: [],//商品封面
             fileList2: [],//商品详情图
 
-
-
-
-            price:"",//规格价格
-            specificationsName:"",//规格名
-            stockId:"",//库存ID
-
-
-            Gtype:"",//规格分类ID
-            Gpinpai:"",//规格品牌id
-            Gid:"",//规格id
-
             //规格表数据
-            guiGeList:[],
+            guiGeList:[
+                {
+                    name:"华为数据线1.5M",
+                    shoujia:35,
+                    kucunID:23,
+                    shuliang:91
+                },
+                {
+                    name:"华为数据线2M",
+                    shoujia:30,
+                    kucunID:4,
+                    shuliang:52
+                },
+                {
+                    name:"华为数据线1M",
+                    shoujia:20,
+                    kucunID:7,
+                    shuliang:982
+                },
+            ],
             //分类数据
+            fenLeiList:[
+                {id:1,name:"数据线"},
+                {id:2,name:"手机壳"},
+                {id:3,name:"钢化膜"},
+            ],
             fenLeiListXuanRan:[],
             //品牌数据
+            pingPaiList:[
+                {id:1,name:"华为"},
+                {id:2,name:"苹果"},
+                {id:3,name:"小米"}
+            ],
             pingPaiListXuanRan:[],
             //规格数据
             guiGeiList:[
-                // {id:1,name:"c型数据线1.5米"},
-                // {id:2,name:"苹果X手机钢化膜"},
-                // {id:3,name:"小米智能音箱"}
+                {id:1,name:"c型数据线1.5米"},
+                {id:2,name:"苹果X手机钢化膜"},
+                {id:3,name:"小米智能音箱"}
             ],
             guiGeiListXuanRan:[],
         }
     }
     componentWillMount(){
-        axios.post(ioApi.product.theType,{nowsPage:1,pageSize:1000}).then((res)=>{
-            this.setState({
-                //渲染下拉框
-                // pingPaiListXuanRan:this.state.pingPaiList.map(function (item) {return <Option value={item.goodsType_id}>{item.goodsType_name}</Option>}),
-                fenLeiListXuanRan:res.data.data.data.map(function (item) {return <Option value={item.goodsType_id}>{item.goodsType_name}</Option>}),
-
-            })
+        this.setState({
+            //渲染下拉框
+            pingPaiListXuanRan:this.state.pingPaiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>}),
+            fenLeiListXuanRan:this.state.fenLeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>}),
+            guiGeiListXuanRan:this.state.guiGeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>})
         })
-        axios.post(ioApi.product.thePingPai,{nowsPage:1,pageSize:1000,remarks:""}).then((res)=>{
-            console.log(res.data.data.data);
-            this.setState({
-                //渲染下拉框
-                pingPaiListXuanRan:res.data.data.data.map(function (item) {return <Option value={item.goodsBrand_id}>{item.goodsBrand_name}</Option>}),
-
-            })
-        })
-
     }
     xianshiMoTi(){
         this.setState({ guiGeMotai: true })
@@ -492,7 +296,7 @@ class addProduct extends React.Component {
                 <Row style={{marginTop:30}}>
                     <Col span={3} style={{textAlign:"right"}}>商品类型：</Col>
                     <Col>
-                        <Select onChange={this.getType} value={this.state.goodsTypeId} style={{marginLeft:30,width:500}}>
+                        <Select onChange={this.getType} style={{marginLeft:30,width:500}}>
                             {this.state.fenLeiListXuanRan}
                         </Select>
                     </Col>
@@ -500,7 +304,7 @@ class addProduct extends React.Component {
                 <Row style={{marginTop:30}}>
                     <Col span={3} style={{textAlign:"right"}}>商品品牌：</Col>
                     <Col>
-                        <Select onChange={this.getPingPai} value={this.state.goodBrandId} style={{marginLeft:30,width:500}}>
+                        <Select onChange={this.getPingPai} style={{marginLeft:30,width:500}}>
                             {this.state.pingPaiListXuanRan}
                         </Select>
                     </Col>
@@ -606,29 +410,29 @@ class addProduct extends React.Component {
                     <Col style={{marginLeft:30}}><Switch checked={this.state.coupon} onClick={this.isYouHui.bind(this)} /></Col>
                 </Row>
                 <Row style={{marginTop:10}}>
-                    <Col span={2} offset={10}><Button type="primary" onClick={this.uplod.bind(this)}>提交</Button></Col>
+                    <Col span={2} offset={10}><Button type="primary">提交</Button></Col>
                     <Col><Button onClick={this.chongZhi.bind(this)}>重置</Button></Col>
                 </Row>
                 <Modal
                     title="添加规格"
                     visible={this.state.guiGeMotai}
-                    onOk={this.GaddOKcg}
+                    onOk={this.handleOk}
                     onCancel={this.guanBiGuiGe}
                     okText="确认"
                     cancelText="取消"
                 >
                     <Row>
                         <Col span={5} style={{textAlign:"right" ,lineHeight:"32px"}}>规格名：</Col>
-                        <Col span={16}><Input placeholder="规格名" onChange={this.Gname.bind(this)} value={this.state.specificationsName} style={{width:200}}/></Col>
+                        <Col span={16}><Input placeholder="规格名" style={{width:200}}/></Col>
                     </Row>
                     <Row style={{marginTop:30}}>
                         <Col span={5} style={{textAlign:"right",lineHeight:"32px"}}>售价：</Col>
-                        <Col span={16}><Input placeholder="售价" onChange={this.price.bind(this)} value={this.state.price} style={{width:200}}/></Col>
+                        <Col span={16}><Input placeholder="售价" style={{width:200}}/></Col>
                     </Row>
                     <Row style={{marginTop:30}}>
                         <Col span={5} style={{textAlign:"right",lineHeight:"26px"}}>选择库存分类：</Col>
                         <Col span={16}>
-                            <Select onChange={this.getGtype.bind(this)} value={this.state.Gtype} style={{width:200}}>
+                            <Select onChange={this.getType} style={{width:200}}>
                                 {this.state.fenLeiListXuanRan}
                             </Select>
                         </Col>
@@ -636,7 +440,7 @@ class addProduct extends React.Component {
                     <Row style={{marginTop:30}}>
                         <Col span={5} style={{textAlign:"right",lineHeight:"26px"}}>选择库存品牌：</Col>
                         <Col span={16}>
-                            <Select onChange={this.getGpinPai.bind(this)} value={this.state.Gpinpai} style={{width:200}}>
+                            <Select onChange={this.getPingPai} style={{width:200}}>
                                 {this.state.pingPaiListXuanRan}
                             </Select>
                         </Col>
@@ -644,7 +448,7 @@ class addProduct extends React.Component {
                     <Row style={{marginTop:30}}>
                         <Col span={5} style={{textAlign:"right",lineHeight:"26px"}}>选择库存货物：</Col>
                         <Col span={16}>
-                            <Select onChange={this.getGid.bind(this)} value={this.state.Gid} style={{width:200}}>
+                            <Select onChange={this.getPingPai} style={{width:200}}>
                                 {this.state.guiGeiListXuanRan}
                             </Select>
                         </Col>

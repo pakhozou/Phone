@@ -1,6 +1,6 @@
 import React from 'react';  //导入react
 import { Row, Col } from 'antd';
-import { Input,Select,Button,Switch,Space,Table,Tooltip} from 'antd';
+import { Input,Select,Button,Switch,Space,Table,Tooltip,Popconfirm} from 'antd';
 import { SearchOutlined,EditOutlined,DeleteOutlined } from '@ant-design/icons';
 import {withRouter} from 'react-router-dom'
 import axios from '../../utils/axios'
@@ -9,44 +9,47 @@ const { Option } = Select;
 
 //xxx 组件名
 class ProductList extends React.Component {
+    //点击页码事件
+    changPage(current){
+        console.log(current);
+
+        this.setState({
+            page:current
+        },function () {
+            this.initdata()
+        })
+    }
+    //变化回调
+    onShowSizeChange(Current,pageSize){
+        console.log(Current,pageSize)
+    }
+    fenye(){
+        const fy = {
+            //  当前页
+            current:this.state.page,
+            //  每页显示
+            pageSize:this.state.size,
+            //  总条数
+            total:this.state.count,
+            //  点击下一页
+            onChange:(current)=> this.changPage(current),
+            //  每页显示变化
+            onShowSizeChange:(Current,pageSize) =>{
+                console.log(pageSize);
+                this.onShowSizeChange(Current,pageSize)
+            },
+            //  默认第几页
+            defaultCurrent:this.state.defaultCurrent,
+            //是否可以跳转
+            showQuickJumper:this.state.showQuickJumper,
+        };
+        return fy
+    }
 //构造函数
     constructor(props) {
         super(props)
         this.state = {
-            pdList:[
-                {
-                    id: 99,
-                    name: '华为数据线',
-                    img: "http://zhoudw.vip/healthproject/upload/7d1328eb-d8df-4005-bc15-b0eb8b1828b7.jpg",
-                    leixing: '数据线',
-                    pingpai: "华为数据线",
-                    xiaoliang:23,
-                },
-                {
-                    id: 2,
-                    name: '苹果原装数据线',
-                    img: "https://img1.360buyimg.com/n6/jfs/t1/132123/40/2321/318254/5ee72d7eEf4ee57b2/92cca23de50ce229.jpg",
-                    leixing: '数据线',
-                    pingpai: "苹果数据线",
-                    xiaoliang:23,
-                },
-                {
-                    id: 3,
-                    name: '小米钢化膜',
-                    img: "https://img1.360buyimg.com/n6/jfs/t1/132123/40/2321/318254/5ee72d7eEf4ee57b2/92cca23de50ce229.jpg",
-                    leixing: '钢化膜',
-                    pingpai: "小米钢化膜",
-                    xiaoliang:23,
-                },
-                {
-                    id: 4,
-                    name: '苹果手机支架',
-                    img: "https://img1.360buyimg.com/n6/jfs/t1/132123/40/2321/318254/5ee72d7eEf4ee57b2/92cca23de50ce229.jpg",
-                    leixing: '手机支架',
-                    pingpai: "苹果手机",
-                    xiaoliang:23,
-                },
-            ],
+            pdList:[],
             fenLeiList:[
                 {id:1,name:"数据线"},
                 {id:2,name:"手机壳"},
@@ -60,20 +63,94 @@ class ProductList extends React.Component {
                 {id:3,name:"小米"}
             ],
             pingPaiListXuanRan:[],
+            goodsName:"",//商品名查询
+            goodsStatue:"",//商品状态
+            goodsTypeId:"",//商品类型ID
+            goodBrandId:"",//商品品牌ID
+            page:1,//当前页
+            size:2,//每页数
+            count:""//总数
         }
         this.chakan = this.chakan.bind(this)
+    }
+    chongZhi(){
+        this.setState({
+            goodsName:"",//商品名查询
+            goodsStatue:"",//商品状态
+            goodsTypeId:"",//商品类型ID
+            goodBrandId:"",//商品品牌ID
+            page:1,//当前页
+            size:5,//每页数
+        },function () {
+            this.initdata()
+        })
+    }
+    GETzhuangTai(e){
+        this.setState({
+            goodsStatue:e
+        })
+    }
+    ShangPingID(e){
+        this.setState({
+            goodBrandId:e
+        })
+    }
+    TypeID(e){
+        this.setState({
+            goodsTypeId:e
+        })
     }
     chakan(data){
         this.props.history.push({pathname:'/index/Product/ProductDetails',query:{id:data.goodsId}})
     }
+    delPD(data){
+        axios.post(ioApi.product.delPD,{
+            GoodsId:data.goodsId
+        }, {
+            transformRequest:[
+                function(data){
+                    let params = "";
+                    var arr = [];
+                    for(var key in data){
+                        arr.push(key+"="+data[key]);
+                    }
+                    params = arr.join("&");
+                    return params;
+                }
+            ]
+        }).then((res)=>{
+            console.log(res);
+            this.initdata()
+        })
+    }
     componentWillMount(){
+        this.initdata()
+        axios.post(ioApi.product.theType,{nowsPage:1,pageSize:1000}).then((res)=>{
+            this.setState({
+                //渲染下拉框
+                // pingPaiListXuanRan:this.state.pingPaiList.map(function (item) {return <Option value={item.goodsType_id}>{item.goodsType_name}</Option>}),
+                fenLeiListXuanRan:res.data.data.data.map(function (item) {return <Option value={item.goodsType_id}>{item.goodsType_name}</Option>}),
+
+            })
+        })
+        axios.post(ioApi.product.thePingPai,{nowsPage:1,pageSize:1000,remarks:""}).then((res)=>{
+            console.log(res.data.data.data);
+            this.setState({
+                //渲染下拉框
+                pingPaiListXuanRan:res.data.data.data.map(function (item) {return <Option value={item.goodsBrand_id}>{item.goodsBrand_name}</Option>}),
+
+            })
+        })
+
+    }
+    initdata(){
         axios.post(ioApi.product.getProductList,{
-            goodBrandId: '',
-            goodsName: '',
-            goodsStatue: '',
-            goodsTypeId: "",
-            page: 1,
-            size: 1000
+            goodBrandId: this.state.goodBrandId,
+            goodsName: this.state.goodsName,
+            goodsStatue: this.state.goodsStatue,
+            goodsTypeId: this.state.goodsTypeId,
+            page: this.state.page,
+            size: this.state.size
         },{
             headers:{
                 'Content-Type':'application/json'
@@ -91,15 +168,16 @@ class ProductList extends React.Component {
                 }
             ]
         }).then((res)=>{
+            console.log(res);
             this.setState({
-                pdList:res.data.data.data
+                pdList:res.data.data.data,
+                count:res.data.data.dataCount
             })
         })
+    }
+    goodsName(e){
         this.setState({
-            //渲染下拉框
-            pingPaiListXuanRan:this.state.pingPaiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>}),
-            fenLeiListXuanRan:this.state.fenLeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>}),
-
+            goodsName:e.target.value
         })
     }
     xiaJiaChange(data){
@@ -177,6 +255,28 @@ class ProductList extends React.Component {
                 }
             }
         }
+        axios.post(ioApi.product.xiuGaiProduct,{
+            goodsId:data.goodsId,
+            goodsIsRush:nowSta
+        },{
+            headers:{
+                'Content-Type':'application/json'
+            }
+        }, {
+            transformRequest:[
+                function(data){
+                    let params = "";
+                    var arr = [];
+                    for(var key in data){
+                        arr.push(key+"="+data[key]);
+                    }
+                    params = arr.join("&");
+                    return params;
+                }
+            ]
+        }).then((res)=>{
+            console.log(res);
+        })
     }
     reXiaoChange(data){
         console.log(data);
@@ -204,6 +304,28 @@ class ProductList extends React.Component {
                 }
             }
         }
+        axios.post(ioApi.product.xiuGaiProduct,{
+            goodsId:data.goodsId,
+            goodsIsHot:nowSta
+        },{
+            headers:{
+                'Content-Type':'application/json'
+            }
+        }, {
+            transformRequest:[
+                function(data){
+                    let params = "";
+                    var arr = [];
+                    for(var key in data){
+                        arr.push(key+"="+data[key]);
+                    }
+                    params = arr.join("&");
+                    return params;
+                }
+            ]
+        }).then((res)=>{
+            console.log(res);
+        })
     }
 
 //渲染
@@ -264,7 +386,14 @@ class ProductList extends React.Component {
                             <Button shape="circle" size="large" icon={<EditOutlined />} />
                         </Tooltip>
                         <Tooltip title="删除商品">
-                            <Button danger shape="circle" size="large" icon={<DeleteOutlined />} />
+                            <Popconfirm
+                                title="你确定关闭特价吗？"
+                                okText="确定"
+                                cancelText="取消"
+                                onConfirm={()=>this.delPD(text)}
+                            >
+                            <Button danger shape="circle" size="large" icon={<DeleteOutlined/>} />
+                            </Popconfirm>
                         </Tooltip>
                     </Space>
                 )
@@ -275,34 +404,34 @@ class ProductList extends React.Component {
             <div>
               <h2>商品列表</h2>
                 <Row>
-                    <Col span={5}>商品名：<Input placeholder="商品名" style={{ width: 200 }} /></Col>
+                    <Col span={5}>商品名：<Input placeholder="商品名" value={this.state.goodsName} onChange={this.goodsName.bind(this)} style={{ width: 200 }} /></Col>
                     <Col span={5}>
                         商品类型：
-                        <Select style={{ width: 200 }}>
-                            {this.state.pingPaiListXuanRan}
-                        </Select>
-                    </Col>
-                    <Col span={5}>
-                        品牌类型：
-                        <Select style={{ width: 200 }}>
+                        <Select value={this.state.goodsTypeId} onChange={this.TypeID.bind(this)} style={{ width: 200 }}>
                             {this.state.fenLeiListXuanRan}
                         </Select>
                     </Col>
                     <Col span={5}>
+                        品牌类型：
+                        <Select style={{ width: 200 }}  value={this.state.goodBrandId} onChange={this.ShangPingID.bind(this)}>
+                            {this.state.pingPaiListXuanRan}
+                        </Select>
+                    </Col>
+                    <Col span={5}>
                         商品状态：
-                        <Select style={{ width: 200 }}>
+                        <Select style={{ width: 200 }} value={this.state.goodsStatue} onChange={this.GETzhuangTai.bind(this)}>
                             <Option value="1">已上架</Option>
-                            <Option value="2">已下架</Option>
+                            <Option value="0">已下架</Option>
                         </Select>
                     </Col>
                     <Col span={4}>
-                        <Button type="primary">搜索</Button>
-                        <Button style={{ marginLeft:30}}>重置</Button>
+                        <Button type="primary" onClick={this.initdata.bind(this)}>搜索</Button>
+                        <Button style={{ marginLeft:30}} onClick={this.chongZhi.bind(this)}>重置</Button>
                     </Col>
                 </Row>
                 <Row style={{marginTop:50}}>
                     <Col span={24}>
-                    <Table columns={columns} dataSource={this.state.pdList} />
+                    <Table columns={columns} dataSource={this.state.pdList} pagination={this.fenye()}/>
                     </Col>
                 </Row>
             </div>
