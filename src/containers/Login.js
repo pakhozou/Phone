@@ -2,6 +2,7 @@ import React from 'react';  //导入react
 import { Form, Input, Button, Checkbox,message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import './css/Login.css'
+// import  img from "../../public/1.png"
 //xxx 组件名
 import {inject,observer} from "mobx-react";
 import axios from "../utils/axios";
@@ -73,54 +74,58 @@ class Login extends React.Component {
 //渲染
   render() {
     return (
-      <div className={'Login'}>
-        <Form
-          name="normal_login"
-          className="login-form"
-          initialValues={{
-            remember: true,
-          }}
-          onFinish={this.onFinish}
-        >
-          <Form.Item
-            name="username"
-            rules={[
-              {
-                required: true,
-                message: '请输入用户名!',
-              },
-            ]}
+        <div className={"bg"}>
+          <img src="https://www.xiaoshouyi.com/wp-content/uploads/2020/07/wechart-banner-image.png" style={{marginTop:150}}/>
+      <div className={'LoginBox'}>
+
+        <div className={"logmin"}>
+          <h3 className={'title'}>
+            罗德手机配件商城管理系统
+          </h3>
+          <Form
+              name="normal_login"
+              className="login-form"
+              initialValues={{
+                  remember: true,
+              }}
+              onFinish={this.onFinish}
           >
-            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username-admin" />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: '请输入密码!',
-              },
-            ]}
-          >
-            <Input
-              prefix={<LockOutlined className="site-form-item-icon" />}
-              type="password"
-              placeholder="Password-123456"
-            />
-          </Form.Item>
-          <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
+            <Form.Item
+                name="username"
+                rules={[
+                    {
+                        required: true,
+                        message: '请输入用户名!',
+                    },
+                ]}
+            >
+              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="用户名" />
+            </Form.Item>
+            <Form.Item
+                name="password"
+                rules={[
+                    {
+                        required: true,
+                        message: '请输入密码!',
+                    },
+                ]}
+            >
+              <Input
+                  prefix={<LockOutlined className="site-form-item-icon" />}
+                  type="password"
+                  placeholder="密码"
+              />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" className="login-form-button">
+                登 录
+              </Button>
+            </Form.Item>
 
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit" className="login-form-button">
-              登 录
-            </Button>
-          </Form.Item>
-
-        </Form>
+          </Form>
+        </div>
       </div>
+        </div>
     )
   }
 }
