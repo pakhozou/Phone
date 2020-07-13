@@ -1,5 +1,5 @@
 import React from 'react';  //导入react
-import { Upload, Modal,Row,Col,Input,Select,Button,Table,Switch } from 'antd';
+import { Upload, Modal,Row,Col,Input,Select,Button,Table,Switch,message } from 'antd';
 import { PlusOutlined,UnorderedListOutlined,InsertRowAboveOutlined,ProfileOutlined,ShoppingOutlined } from '@ant-design/icons';
 import axios from '../../utils/axios'
 import ioApi from '../../api/index'
@@ -36,9 +36,6 @@ class addProduct extends React.Component {
             goodsTypeId:"",
         })
     }
-
-
-
     ProductName(e){
         this.setState({
             ProductName:e.target.value
@@ -74,13 +71,6 @@ class addProduct extends React.Component {
             price:e.target.value
         })
     }
-
-
-
-
-
-
-
     //上传图片
     handleCancel1 = () => this.setState({ previewVisible1: false });
     handlePreview1 = async file => {
@@ -95,16 +85,16 @@ class addProduct extends React.Component {
     };
     handleChange1 = ({ file, fileList, event }) => {
         this.setState({ fileList1:fileList })
-        console.log(event);
+        // console.log(event);
         if(event!=undefined){
             if(event.percent === 100){
-                console.log(file);
-                console.log(this.state.fileList1);
+                // console.log(file);
+                // console.log(this.state.fileList1);
             }
         }
     };
     removeImg1 = () =>{
-        console.log(this.state.fileList1);
+        // console.log(this.state.fileList1);
     }
     handleCancel2 = () => this.setState({ previewVisible2: false });
     handlePreview2 = async file => {
@@ -119,25 +109,25 @@ class addProduct extends React.Component {
     };
     handleChange2 = ({ file, fileList, event }) => {
         this.setState({ fileList2:fileList })
-        console.log(event);
+        // console.log(event);
         if(event!=undefined){
             if(event.percent === 100){
-                console.log(file);
-                console.log(this.state.fileList2);
+                // console.log(file);
+                // console.log(this.state.fileList2);
             }
         }
     };
     removeImg2 = () =>{
-        console.log(this.state.fileList2);
+        // console.log(this.state.fileList2);
     }
     //获取类型事件
     getType = (e) =>{
-        console.log(e);
+        // console.log(e);
         this.setState({goodsTypeId:e})
     }
     //获取品牌事件
     getPingPai = (e)=>{
-        console.log(e);
+        // console.log(e);
         this.setState({goodBrandId:e})
     }
     //获取规格类型id
@@ -163,7 +153,7 @@ class addProduct extends React.Component {
                     }
                 ]
             }).then((res)=>{
-                console.log(res);
+                // console.log(res);
                 let list = []
                 for(let i = 0;i<res.data.data.length;i++){
                     let addlist ={}
@@ -205,7 +195,7 @@ class addProduct extends React.Component {
                     }
                 ]
             }).then((res)=>{
-                console.log(res.data.data);
+                // console.log(res.data.data);
                 let list = []
                 for(let i = 0;i<res.data.data.length;i++){
                     let addlist ={}
@@ -217,7 +207,7 @@ class addProduct extends React.Component {
                 this.setState({
                     guiGeiList:list
                 },function () {
-                    console.log(this.state.guiGeiList);
+                    // console.log(this.state.guiGeiList);
                     this.setState({
                         //渲染下拉框
                         guiGeiListXuanRan:this.state.guiGeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>})
@@ -259,7 +249,7 @@ class addProduct extends React.Component {
         }
     }
     GaddOKcg=()=>{
-        console.log("ok");
+        // console.log("ok");
         let list = [...this.state.guiGeList]
         let addObj = {}
         let id =this.state.Gid
@@ -278,7 +268,9 @@ class addProduct extends React.Component {
 
     }
     uplod=()=>{
-        console.log(6);
+        let key = "upload"
+        message.loading({ content: '上传中...', key });
+        // console.log(6);
         let goodBrandId = this.state.goodBrandId //品牌ID
         let goodsCoverImg=[]//封面图
         let goodsDetailimg=[]//详细图
@@ -344,22 +336,23 @@ class addProduct extends React.Component {
                 }
             ]
         }).then((res)=>{
-            console.log(res);
+            // console.log(res);
+            if(res.data.code === 200){
+                message.success({ content: '上传成功!', key, duration: 2 });
+            }
+            else {
+                message.error({content:"上传失败",key,duration:2});
+            }
         })
-        console.log(upObj);
+        // console.log(upObj);
 
 
     }
     delGui(data,index){
-        console.log(data);
-        console.log(index);
+        // console.log(data);
+        // console.log(index);
         let list = [...this.state.guiGeList]
         list.splice(index,1)
-        // for(let i = 0;i<list.length;i++){
-        //     if(list[i].id === data.id){
-        //         list.splice(i,1)
-        //     }
-        // }
         this.setState({
             guiGeList:list
         })
@@ -375,8 +368,6 @@ class addProduct extends React.Component {
             previewImage2: '',
             previewTitle2: '',
             guiGeMotai:false,
-
-
             ProductName:"",//商品名
             goodsTypeId:"",//分类ID
             goodBrandId:"",//品牌id
@@ -388,24 +379,14 @@ class addProduct extends React.Component {
             HotSale:0,//热销
             coupon:0,//优惠券
             upGuiGe:[],//上传规格
-
-
-
             fileList1: [],//商品封面
             fileList2: [],//商品详情图
-
-
-
-
             price:"",//规格价格
             specificationsName:"",//规格名
             stockId:"",//库存ID
-
-
             Gtype:"",//规格分类ID
             Gpinpai:"",//规格品牌id
             Gid:"",//规格id
-
             //规格表数据
             guiGeList:[],
             //分类数据
@@ -413,11 +394,7 @@ class addProduct extends React.Component {
             //品牌数据
             pingPaiListXuanRan:[],
             //规格数据
-            guiGeiList:[
-                // {id:1,name:"c型数据线1.5米"},
-                // {id:2,name:"苹果X手机钢化膜"},
-                // {id:3,name:"小米智能音箱"}
-            ],
+            guiGeiList:[],
             guiGeiListXuanRan:[],
         }
     }
@@ -431,7 +408,9 @@ class addProduct extends React.Component {
             })
         })
         axios.post(ioApi.product.thePingPai,{nowsPage:1,pageSize:1000,remarks:""}).then((res)=>{
-            console.log(res.data.data.data);
+            if(res.data.code === 500){
+                this.props.history.go(0)
+            }
             this.setState({
                 //渲染下拉框
                 pingPaiListXuanRan:res.data.data.data.map(function (item) {return <Option value={item.goodsBrand_id}>{item.goodsBrand_name}</Option>}),
@@ -459,7 +438,7 @@ class addProduct extends React.Component {
         );
         //类型
         function leixingonChange(value) {
-            console.log(`selected ${value}`);
+            // console.log(`selected ${value}`);
         }
 
         //规格表
@@ -491,12 +470,13 @@ class addProduct extends React.Component {
                 )
             },
         ];
+        let upImg = ioApi.product.upImg
         return (
             <div>
                 <h2>添加商品</h2>
                 <Row>
                     <Col>
-                        <h3><UnorderedListOutlined />商品基础信息</h3>
+                        <h3><UnorderedListOutlined />&nbsp;&nbsp;商品基础信息</h3>
                     </Col>
                 </Row>
                 <Row>
@@ -525,7 +505,7 @@ class addProduct extends React.Component {
                 </Row>
                 <Row>
                     <Col>
-                        <h3><InsertRowAboveOutlined />商品规格信息</h3>
+                        <h3><InsertRowAboveOutlined />&nbsp;&nbsp;商品规格信息</h3>
                     </Col>
                 </Row>
                 <Row style={{marginTop:30}}>
@@ -541,14 +521,14 @@ class addProduct extends React.Component {
                 </Row>
                 <Row style={{marginTop:30}}>
                     <Col>
-                        <h3><ProfileOutlined />商品详细信息</h3>
+                        <h3><ProfileOutlined />&nbsp;&nbsp;商品详细信息</h3>
                     </Col>
                 </Row>
                 <Row style={{marginTop:30}}>
                     <Col span={3} style={{textAlign:"right"}}>添加商品图：</Col>
                     <Col style={{marginLeft:30}}>
                         <Upload
-                            action="http://111.229.83.241:9601/user/file/upload"
+                            action={upImg}
                             listType="picture-card"
                             fileList={fileList1}
                             onPreview={this.handlePreview1}
@@ -568,10 +548,10 @@ class addProduct extends React.Component {
                     </Col>
                 </Row>
                 <Row style={{marginTop:30}}>
-                    <Col span={3} style={{textAlign:"right"}}>添加商品详情图：</Col>
+                    <Col span={3} style={{textAlign:"right"}}>&nbsp;&nbsp;添加商品详情图：</Col>
                     <Col style={{marginLeft:30}}>
                         <Upload
-                            action="http://111.229.83.241:9601/user/file/upload"
+                            action={upImg}
                             listType="picture-card"
                             fileList={fileList2}
                             onPreview={this.handlePreview2}
@@ -604,7 +584,7 @@ class addProduct extends React.Component {
                 </Row>
                 <Row style={{marginTop:30}}>
                     <Col>
-                        <h3><ShoppingOutlined />商品活动信息</h3>
+                        <h3><ShoppingOutlined />&nbsp;&nbsp;商品活动信息</h3>
                     </Col>
                 </Row>
                 <Row style={{marginTop:10}}>

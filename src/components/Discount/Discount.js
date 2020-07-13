@@ -1,9 +1,10 @@
 import React from 'react';  //导入react
-import { Table,  Space ,Button, Switch, Row, Col ,Input ,Form, Modal,DatePicker } from 'antd';
+import { Table,  Space ,Button, Switch, Row, Col ,Input ,Form, Modal,DatePicker,message } from 'antd';
 import moment from 'moment';
+import locale from 'antd/lib/date-picker/locale/zh_CN'
 import Axios from '../../utils/axios';
 import ioApi from '../../api/index'
-
+import "./Discount/Discount.css"
 const { RangePicker } = DatePicker;
 class Discount extends React.Component {
     
@@ -42,6 +43,9 @@ class Discount extends React.Component {
     };
     // 渲染前
     componentWillMount(){
+        console.log("渲染前")
+        let key = 'loading'
+        message.loading({content:'加载中',key,duration:50})
         Axios.post(ioApi.discount.getDiscountList,
             {
                 currentPsge:this.state.current,
@@ -54,10 +58,17 @@ class Discount extends React.Component {
             }
         ).then(result => {
             console.log(result)
-            this.setState({
-                data:result.data.data,
-                total:result.data.count
-            })
+            if(result.data.data === null){
+                message.error({content:'加载失败',key,duration:5})
+            }
+            else{
+                this.setState({
+                    data:result.data.data,
+                    total:result.data.count
+                },()=>{
+                    message.success({content:'加载完成',key,duration:5})
+                })
+            }
         })
     }
     //修改优惠券的状态
@@ -135,6 +146,8 @@ class Discount extends React.Component {
         id:id
         });
         //查询详情
+        let key = 'loading'
+        message.loading({content:'加载中',key,duration:50})
         Axios.post(ioApi.discount.xiangqing,{
             coupon_Id: id,
         }).then(result=>{
@@ -148,6 +161,8 @@ class Discount extends React.Component {
                 detailsEndTime:result.data.data[0].coupon_Endtime,//结束时间
                 detailsNum:result.data.data[0].coupon_Number,//优惠券数量
                 detailsUserName:result.data.data[0].coupon_Userid,//创建者id
+            },()=>{
+                message.success({content:'加载完成',key,duration:5})
             })
         })
     };
@@ -260,6 +275,8 @@ class Discount extends React.Component {
         this.setState({
             current:page
         },function(){
+            let key = 'loading'
+            message.loading({content:'加载中',key,duration:50})
             Axios.post(ioApi.discount.getDiscountList,
                 {
                     currentPsge:this.state.current,
@@ -272,10 +289,17 @@ class Discount extends React.Component {
                 }
             ).then(result => {
                 console.log(result)
-                this.setState({
-                    data:result.data.data,
-                    total:result.data.count
-                })
+                if(result.data.data === null){
+                    message.error({content:'加载失败',key,duration:5})
+                }
+                else{
+                    this.setState({
+                        data:result.data.data,
+                        total:result.data.count
+                    },()=>{
+                        message.success({content:'加载完成',key,duration:5})
+                    })
+                }
             })
  
         }) 
@@ -284,6 +308,8 @@ class Discount extends React.Component {
     search = ()=>{
         console.log(this.state.inputId)
         console.log(this.state.inputName)
+        let key = 'loading'
+        message.loading({content:'加载中',key,duration:50})
         Axios.post(ioApi.discount.search,{
             pageSize:this.state.pagesize,
             currentPsge:this.state.current,
@@ -293,7 +319,11 @@ class Discount extends React.Component {
             console.log(result.data.data)
             this.setState({
                 data:result.data.data
-            })
+            }
+            ,()=>{
+                message.success({content:'加载完成',key,duration:5})
+            }
+            )
         })
     }
 
@@ -399,6 +429,7 @@ class Discount extends React.Component {
                                             'This Month': [moment().startOf('month'), moment().endOf('month')],
                                             }}
                                             onChange={this.onChange.bind(this)}
+                                            locale={locale}
                                         />
                                     </Form.Item>
                                 </Col>
@@ -454,20 +485,22 @@ class Discount extends React.Component {
                 onOk={this.handleOk}
                 onCancel={this.handleCancel}
                 footer={null}
+                className='xiangqing'
+                width={700}
                 >
-                    <Row>
+                    <Row className='row'>
                         <Col span='12'>优惠券id：{this.state.detailsId}</Col>
                         <Col span='12'>优惠券名称：{this.state.detailsName}</Col>
                     </Row>
-                    <Row>
+                    <Row className='row'>
                         <Col span='12'>使用条件：{this.state.detailsconditions}元</Col>
                         <Col span='12'>减免金额：{this.state.detailspreferential}元</Col>
                     </Row>
-                    <Row>
+                    <Row className='row'>
                         <Col span='12'>创建时间：{this.state.detailsStartTime}</Col>
                         <Col span='12'>结束时间：{this.state.detailsEndTime}</Col>
                     </Row>
-                    <Row>
+                    <Row className='row'>
                         <Col span='12'>剩余数量：{this.state.detailsNum}</Col>
                         <Col span='12'>创建者姓名：{this.state.detailsUserName}</Col>
                     </Row>

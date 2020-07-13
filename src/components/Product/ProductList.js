@@ -1,6 +1,6 @@
 import React from 'react';  //导入react
 import { Row, Col } from 'antd';
-import { Input,Select,Button,Switch,Space,Table,Tooltip,Popconfirm} from 'antd';
+import { Input,Select,Button,Switch,Space,Table,Tooltip,Popconfirm,message} from 'antd';
 import { SearchOutlined,EditOutlined,DeleteOutlined } from '@ant-design/icons';
 import {withRouter} from 'react-router-dom'
 import axios from '../../utils/axios'
@@ -80,7 +80,7 @@ class ProductList extends React.Component {
             goodsTypeId:"",//商品类型ID
             goodBrandId:"",//商品品牌ID
             page:1,//当前页
-            size:5,//每页数
+            size:2,//每页数
         },function () {
             this.initdata()
         })
@@ -129,6 +129,9 @@ class ProductList extends React.Component {
     componentWillMount(){
         this.initdata()
         axios.post(ioApi.product.theType,{nowsPage:1,pageSize:1000}).then((res)=>{
+            if(res.data.code === 500){
+                this.props.history.go(0)
+            }
             this.setState({
                 //渲染下拉框
                 // pingPaiListXuanRan:this.state.pingPaiList.map(function (item) {return <Option value={item.goodsType_id}>{item.goodsType_name}</Option>}),
@@ -136,17 +139,38 @@ class ProductList extends React.Component {
 
             })
         })
-        axios.post(ioApi.product.thePingPai,{nowsPage:1,pageSize:1000,remarks:""}).then((res)=>{
-            console.log(res.data.data.data);
+        axios.post(ioApi.product.thePingPai,{nowsPage:1,pageSize:1000,remarks:""},{
+            headers:{
+                'Content-Type':'application/json'
+            }
+        }, {
+            transformRequest:[
+                function(data){
+                    let params = "";
+                    var arr = [];
+                    for(var key in data){
+                        arr.push(key+"="+data[key]);
+                    }
+                    params = arr.join("&");
+                    return params;
+                }
+            ]
+        }).then((res)=>{
+            if(res.data.code === 500){
+                this.props.history.go(0)
+            }
+            let list =res.data.data.data
             this.setState({
                 //渲染下拉框
-                pingPaiListXuanRan:res.data.data.data.map(function (item) {return <Option value={item.goodsBrand_id}>{item.goodsBrand_name}</Option>}),
+                pingPaiListXuanRan:list.map(function (item) {return <Option value={item.goodsBrand_id}>{item.goodsBrand_name}</Option>}),
 
             })
         })
 
     }
     initdata(){
+        let key = "upload"
+        message.loading({content:"加载数据中",key})
         axios.post(ioApi.product.getProductList,{
             goodBrandId: this.state.goodBrandId,
             goodsName: this.state.goodsName,
@@ -172,9 +196,14 @@ class ProductList extends React.Component {
             ]
         }).then((res)=>{
             console.log(res);
+            if(res.data.code === 500){
+                message.error({content:"加载失败：我觉得是后台的锅",key,duration:2})
+            }
             this.setState({
                 pdList:res.data.data.data,
                 count:res.data.data.dataCount
+            },function () {
+                message.success({content:"加载成功",key,duration:1})
             })
         })
     }

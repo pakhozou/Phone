@@ -1,5 +1,5 @@
 import React from 'react';  //导入react
-import { Upload, Modal,Row,Col,Input,Select,Button,Table,Switch,Popconfirm } from 'antd';
+import { Upload, Modal,Row,Col,Input,Select,Button,Table,Switch,Popconfirm,message } from 'antd';
 import { PlusOutlined,UnorderedListOutlined,InsertRowAboveOutlined,ProfileOutlined,ShoppingOutlined } from '@ant-design/icons';
 import axios from '../../utils/axios'
 import ioApi from '../../api/index'
@@ -86,16 +86,16 @@ class addProduct extends React.Component {
     };
     handleChange1 = ({ file, fileList, event }) => {
         this.setState({ fileList1:fileList })
-        console.log(event);
+        // console.log(event);
         if(event!=undefined){
             if(event.percent === 100){
-                console.log(file);
-                console.log(this.state.fileList1);
+                // console.log(file);
+                // console.log(this.state.fileList1);
             }
         }
     };
     removeImg1 = () =>{
-        console.log(this.state.fileList1);
+        // console.log(this.state.fileList1);
     }
     handleCancel2 = () => this.setState({ previewVisible2: false });
     handlePreview2 = async file => {
@@ -113,17 +113,17 @@ class addProduct extends React.Component {
         console.log(event);
         if(event!=undefined){
             if(event.percent === 100){
-                console.log(file);
-                console.log(this.state.fileList2);
+                // console.log(file);
+                // console.log(this.state.fileList2);
             }
         }
     };
     removeImg2 = () =>{
-        console.log(this.state.fileList2);
+        // console.log(this.state.fileList2);
     }
     //获取类型事件
     getType = (e) =>{
-        console.log(e);
+        // console.log(e);
         this.setState({goodsTypeId:e})
     }
     //获取品牌事件
@@ -154,7 +154,7 @@ class addProduct extends React.Component {
                     }
                 ]
             }).then((res)=>{
-                console.log(res);
+                // console.log(res);
                 let list = []
                 for(let i = 0;i<res.data.data.length;i++){
                     let addlist ={}
@@ -196,7 +196,7 @@ class addProduct extends React.Component {
                     }
                 ]
             }).then((res)=>{
-                console.log(res.data.data);
+                // console.log(res.data.data);
                 let list = []
                 for(let i = 0;i<res.data.data.length;i++){
                     let addlist ={}
@@ -208,7 +208,7 @@ class addProduct extends React.Component {
                 this.setState({
                     guiGeiList:list
                 },function () {
-                    console.log(this.state.guiGeiList);
+                    // console.log(this.state.guiGeiList);
                     this.setState({
                         //渲染下拉框
                         guiGeiListXuanRan:this.state.guiGeiList.map(function (item) {return <Option value={item.id}>{item.name}</Option>})
@@ -250,7 +250,7 @@ class addProduct extends React.Component {
         }
     }
     GaddOKcg=()=>{
-        console.log("ok");
+        // console.log("ok");
         // let list = [...this.state.guiGeList]
         let addObj = {}
         let id =this.state.Gid
@@ -265,7 +265,7 @@ class addProduct extends React.Component {
         addObj.salesPrice= parseFloat(this.state.price)
         addObj.stockId = id
 
-        console.log(addObj);
+        // console.log(addObj);
         axios.post(ioApi.product.addGuiGe,addObj,{
             headers:{
                 'Content-Type':'application/json'
@@ -283,7 +283,7 @@ class addProduct extends React.Component {
                 }
             ]
         }).then((res)=>{
-            console.log(res);
+            // console.log(res);
             this.getProductMSG(this.state.id)
         })
         // addObj.shuliang = parseFloat(num)
@@ -292,10 +292,10 @@ class addProduct extends React.Component {
 
     }
     uplod=()=>{
-        console.log(6);
+        // console.log(6);
         let goodsId = this.state.id
         let goodBrandId = this.state.goodBrandId //品牌ID
-        let goodsFlag = this.state.keyword.split("、")//关键字
+        let goodsFlagStrs = this.state.keyword.split("、")//关键字
         let goodsFreight = parseFloat(this.state.Postage)
         let goodsIntroduce = this.state.ProductDetails
         let goodsIsHot = this.state.HotSale
@@ -317,7 +317,7 @@ class addProduct extends React.Component {
         let upObj = {
             goodsId,
             goodBrandId,
-            goodsFlag,
+            goodsFlagStrs,
             goodsFreight,
             goodsIntroduce,
             goodsIsHot,
@@ -345,13 +345,13 @@ class addProduct extends React.Component {
                 }
             ]
         }).then((res)=>{
-            console.log(res);
+            // console.log(res);
         })
-        console.log(upObj);
+        // console.log(upObj);
 
     }
     delGui(data,index){
-        console.log(data.specificationsId);
+        // console.log(data.specificationsId);
         axios.post(ioApi.product.delGuiGe,
             {
                 SpecificationsId:data.specificationsId
@@ -368,56 +368,46 @@ class addProduct extends React.Component {
                     }
                 ]
             }).then((res)=>{
-            console.log(res);
+            // console.log(res);
             this.getProductMSG(this.state.id)
         })
-
-        // console.log(index);
-        // let list = [...this.state.guiGeList]
-        // list.splice(index,1)
-        // for(let i = 0;i<list.length;i++){
-        //     if(list[i].id === data.id){
-        //         list.splice(i,1)
-        //     }
-        // }
-        // this.setState({
-        //     guiGeList:list
-        // })
     }
 
 
     CimgAdd=()=>{
-        console.log(this.state.fileList1[0].response.msg);
+        // console.log(this.state.fileList1[0].response.msg);
         let obj = {
             goodscoverId:this.state.FimgID,
             goodsId:this.state.id,
             img:this.state.fileList1[0].response.msg
         }
-        console.log(obj);
+        // console.log(obj);
         axios.post(ioApi.product.CimgUp,obj,{
             headers:{
                 'Content-Type':'application/json'
             }
         }).then((res)=>{
-            console.log(res);
+            // console.log(res);
             this.setState({
                 CimgModal:false,
+                fileList1:[]
             })
             this.getProductMSG(this.state.id)
         })
 
     }
     DimgAdd=()=>{
-        console.log(this.state.fileList2);
+        // console.log(this.state.fileList2);
         let obj = {
             detailimgId:this.state.XimgID,
             goodsId:this.state.id,
             img:this.state.fileList2[0].response.msg
         }
         axios.post(ioApi.product.DimgUp,obj).then((res)=>{
-            console.log(res);
+            // console.log(res);
             this.setState({
                 DimgModal:false,
+                fileList2:[]
             })
             this.getProductMSG(this.state.id)
         })
@@ -493,14 +483,14 @@ class addProduct extends React.Component {
     }
 
     updataCimg(msg){
-        console.log(msg);
+        // console.log(msg);
         this.setState({
             FimgID:msg,
             CimgModal:true
         })
     }
     updataDimg(msg){
-        console.log(msg);
+        // console.log(msg);
         this.setState({
             XimgID:msg,
             DimgModal:true
@@ -508,6 +498,8 @@ class addProduct extends React.Component {
     }
 
     getProductMSG(thisId){
+        let key = "uplode"
+        message.loading({content:"初始化中",key})
         axios.post(ioApi.product.ProductById,{
             GoodsId:thisId
         }, {
@@ -523,8 +515,11 @@ class addProduct extends React.Component {
                 }
             ]
         }).then((res)=>{
+            if(res.data.code === 500){
+                message.error({content:"加载失败",key,duration:2})
+            }
             let that = this
-            console.log(res.data.data);
+            // console.log(res.data.data);
             let msg = res.data.data
             let k = []
             for(let i=0;i<msg.goodsFlag.length;i++){
@@ -573,6 +568,8 @@ class addProduct extends React.Component {
                 }),//详情图
                 FimgNum:res.data.data.goodsCoverImg.length,
                 XimgNum:res.data.data.goodsDetailimg.length
+            },function () {
+                message.success({content:"加载完成",key,duration:1})
             })
         })
     }
@@ -582,7 +579,7 @@ class addProduct extends React.Component {
     componentWillMount(){
         let thisId
         if(this.props.location.query !== undefined){
-            console.log(this.props.location.query.id);
+            // console.log(this.props.location.query.id);
             this.setState({
                 id:this.props.location.query.id
             })
@@ -601,14 +598,15 @@ class addProduct extends React.Component {
                 fenL:res.data.data.data
             },function () {
                 axios.post(ioApi.product.thePingPai,{nowsPage:1,pageSize:1000,remarks:""}).then((res)=>{
-                    console.log(res.data.data.data);
-                    this.setState({
-                        //渲染下拉框
-                        pingPaiListXuanRan:res.data.data.data.map(function (item) {return <Option value={item.goodsBrand_id}>{item.goodsBrand_name}</Option>}),
-                        pinL:res.data.data.data
-                    },function () {
-                        this.getProductMSG(thisId)
-                    })
+                    if(res.data !== undefined){
+                        this.setState({
+                            //渲染下拉框
+                            pingPaiListXuanRan:res.data.data.data.map(function (item) {return <Option value={item.goodsBrand_id}>{item.goodsBrand_name}</Option>}),
+                            pinL:res.data.data.data
+                        },function () {
+                            this.getProductMSG(thisId)
+                        })
+                    }
                 })
             })
         })
@@ -617,6 +615,9 @@ class addProduct extends React.Component {
         this.setState({ guiGeMotai: true })
     }
     guanBiGuiGe= ()=>{this.setState({ guiGeMotai: false })}
+    back(){
+        this.props.history.go(-1)
+    }
 //渲染
 
     render() {
@@ -632,7 +633,7 @@ class addProduct extends React.Component {
         );
         //类型
         function leixingonChange(value) {
-            console.log(`selected ${value}`);
+            // console.log(`selected ${value}`);
         }
 
         //规格表
@@ -671,12 +672,14 @@ class addProduct extends React.Component {
                 )
             },
         ];
+        let upImg = ioApi.product.upImg
         return (
             <div>
-                <h2>添加商品</h2>
-                <Row>
+                <Button  type="primary" onClick={this.back.bind(this)}>返回</Button>
+                <h2>修改商品</h2>
+                <Row style={{marginTop:80}}>
                     <Col>
-                        <h3><UnorderedListOutlined />商品基础信息</h3>
+                        <h3><UnorderedListOutlined />&nbsp;&nbsp;商品基础信息</h3>
                     </Col>
                 </Row>
                 <Row>
@@ -703,9 +706,9 @@ class addProduct extends React.Component {
                     <Col span={3} style={{textAlign:"right"}}>商品详情：</Col>
                     <Col><TextArea rows={4} onChange={this.ProductDetails.bind(this)} value={this.state.ProductDetails} style={{marginLeft:30,width:500}}/></Col>
                 </Row>
-                <Row>
+                <Row style={{marginTop:80}}>
                     <Col>
-                        <h3><InsertRowAboveOutlined />商品规格信息</h3>
+                        <h3><InsertRowAboveOutlined />&nbsp;&nbsp;商品规格信息</h3>
                     </Col>
                 </Row>
                 <Row style={{marginTop:30}}>
@@ -719,25 +722,24 @@ class addProduct extends React.Component {
                         </Row>
                     </Col>
                 </Row>
-                <Row style={{marginTop:30}}>
+                <Row style={{marginTop:80}}>
                     <Col>
-                        <h3><ProfileOutlined />商品详细信息</h3>
+                        <h3><ProfileOutlined />&nbsp;&nbsp;商品详细信息</h3>
                     </Col>
                 </Row>
                 <Row style={{marginTop:30}}>
-                    <Col span={3} style={{textAlign:"right"}}>添加商品图：</Col>
+                    <Col span={3} style={{textAlign:"right"}}>修改商品图：</Col>
                     <Col style={{marginLeft:30}} span={20}>
                         <Row>
                             {this.state.FengMianImg}
                         </Row>
                     </Col>
                 </Row>
-                <Row style={{marginTop:30}}>
-                    <Col span={3} style={{textAlign:"right"}}>添加商品详情图：</Col>
+                <Row style={{marginTop:80}}>
+                    <Col span={3} style={{textAlign:"right"}}>修改商品详情图：</Col>
                     <Col style={{marginLeft:30}} span={20}>
                        <Row>
                            {this.state.XiangQing}
-
                        </Row>
                     </Col>
                 </Row>
@@ -753,9 +755,9 @@ class addProduct extends React.Component {
                     <Col span={3} style={{textAlign:"right"}}>商品关键字：</Col>
                     <Col><Input placeholder="商品关键字" onChange={this.keyword.bind(this)} value={this.state.keyword} style={{marginLeft:30,width:500}}/></Col>
                 </Row>
-                <Row style={{marginTop:30}}>
+                <Row style={{marginTop:80}}>
                     <Col>
-                        <h3><ShoppingOutlined />商品活动信息</h3>
+                        <h3><ShoppingOutlined />&nbsp;&nbsp;商品活动信息</h3>
                     </Col>
                 </Row>
                 <Row style={{marginTop:10}}>
@@ -828,7 +830,7 @@ class addProduct extends React.Component {
                     cancelText="取消"
                 >
                     <Upload
-                        action="http://111.229.83.241:9601/user/file/upload"
+                        action={upImg}
                         listType="picture-card"
                         fileList={fileList1}
                         onPreview={this.handlePreview1}
@@ -858,7 +860,7 @@ class addProduct extends React.Component {
                     cancelText="取消"
                 >
                     <Upload
-                        action="http://111.229.83.241:9601/user/file/upload"
+                        action={upImg}
                         listType="picture-card"
                         fileList={fileList2}
                         onPreview={this.handlePreview2}

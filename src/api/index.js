@@ -4,7 +4,10 @@ import userRole from './Role'
 import product from "./product"
 import discount from './discount'
 import order from './order'//yoon引入订单api
+
 import brand from './brand'
+import Type from './Type'//xxm引入api
+
 export default {
     // 喜德贵引入商品api
     product,
@@ -14,5 +17,8 @@ export default {
     discount,
     order,
     brand,
+    // //xxm引入
+    Type,
+
 }
 

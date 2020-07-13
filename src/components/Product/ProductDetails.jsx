@@ -1,9 +1,10 @@
 import React from 'react';  //导入react
 import { Row, Col } from 'antd';
-import { Input,Select,Button,Switch,Space,Table,Tooltip,Modal,Popconfirm} from 'antd';
+import { Input,Select,Button,Switch,Space,Table,Tooltip,Modal,Popconfirm,message} from 'antd';
 import { DatePicker } from 'antd';
 import axios from '../../utils/axios'
 import ioApi from '../../api/index'
+import locale from 'antd/lib/date-picker/locale/zh_CN'
 const { RangePicker } = DatePicker;
 
 //xxx 组件名
@@ -127,6 +128,8 @@ class ProductDetails extends React.Component {
 
     }
     initDate(thisId){
+        let key = "upload"
+        message.loading({content:"加载中",key})
         axios.post(ioApi.product.ProductById,{
             GoodsId:thisId
         }, {
@@ -142,7 +145,9 @@ class ProductDetails extends React.Component {
                 }
             ]
         }).then((res)=>{
-            console.log(res);
+            if(res.data.code === 500){
+                message.error({content:"加载失败：这波还是后台的锅",key,duration:2})
+            }
             if(res.data.data.goodsFlag.length>0&&res.data.data.goodsFlag!==undefined){
                 this.getGuanJianZi(res.data.data.goodsFlag)
             }
@@ -208,6 +213,7 @@ class ProductDetails extends React.Component {
                         youHuiQuan:"否"
                     })
                 }
+                message.success({content:"加载成功",key,duration:1})
             })
         })
     }
@@ -383,7 +389,7 @@ class ProductDetails extends React.Component {
                     </Row>
                     <Row style={{marginTop:30}}>
                         <Col span={5} style={{textAlign:"right",lineHeight:"32px"}}>到期时间：</Col>
-                        <Col span={16}><DatePicker showTime onChange={onChange.bind(this)} onOk={onOk} style={{width:200}} /></Col>
+                        <Col span={16}><DatePicker locale={locale} showTime onChange={onChange.bind(this)} onOk={onOk} style={{width:200}} /></Col>
                     </Row>
                     <Row style={{marginTop:30}}>
                         <Col span={5} style={{textAlign:"right",lineHeight:"26px"}}>享受优惠券：</Col>
