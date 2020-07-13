@@ -6,7 +6,11 @@ import {
   Button,
   Row,
   Radio,
-  Col, Switch,Modal} from 'antd';
+  Col,
+  Switch,
+  Modal,
+  Select,
+} from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 
 import './css/Operational.css';
@@ -16,6 +20,7 @@ import {inject,observer} from "mobx-react";
 import Roleapi from '../../api/index';
 import axios from '../../utils/axios';
 
+const { Option } = Select;
 @inject('data')
 @observer
 //xxx 组件名
@@ -34,7 +39,7 @@ class Operational extends React.Component {
       //当前页
       current:1,
       //每页显示
-      pageSize:3,
+      pageSize:5,
       //总条数
       total:0,
       //默认第几页
@@ -44,6 +49,8 @@ class Operational extends React.Component {
 
       //编辑模态框
       visible: false,
+      //switch状态
+      switchstatus:0,
 
       options : [
         { label: 1, value: '超级管理员' },
@@ -52,12 +59,27 @@ class Operational extends React.Component {
         { label: 4, value: '商品管理员' },
         { label: 5, value: '用户' },
       ],
+
       editStatus:[],
       userID:0,
       roleID : 1,
 
     //  添加
-      addvisible:false
+      addvisible:false,
+      //radio选项
+      rolename:[
+        {id:1,value:'超级管理员',lable:'超级管理员'},
+        {id:2,value:'普通管理员',lable:'普通管理员'},
+        {id:3,value:'客服',lable:'客服'},
+        {id:4,value:'商品管理员',lable:'商品管理员'},
+        {id:5,value:'用户',lable:'用户'}
+      ],
+      //存下拉值
+      optionlist:[],
+    //  input密码
+      inputpwd:'',
+      //账号
+      inputuser:'',
     }
   }
 
@@ -93,7 +115,7 @@ class Operational extends React.Component {
     },function () {
       this.getuserrole()
     })
-  }
+  };
 
   //判断是否禁用
   showcaozuo(data){
@@ -102,11 +124,11 @@ class Operational extends React.Component {
     }
     let disableStatus = data.status;
     return disableStatus
-  }
+  };
   //变化回调
   onShowSizeChange(Current,pageSize){
     console.log(Current,pageSize)
-  }
+  };
   //获取列表数据
   getuserrole(){
     axios.get(Roleapi.userRole.adminList,
@@ -130,19 +152,24 @@ class Operational extends React.Component {
     })
   };
   //是否禁用
-  switchcheck(e){
-    let state = {}
-      state.userId = e.user_id
-      state.statue = e.user_statue
-      // console.log(e.user_id);
-    //       // console.log(e.user_statue);
-    //       // console.log(state);
-    this.props.data.getswitchstatus(state).then((res)=>{
-      if (res == '成功'){
-        this.getuserrole()
+  switchcheck(id,status){
+    console.log(id);
+    console.log(status);
+    if  (status == 1){
+      status = 0
+    }else {
+      status = 1
+    }
+    axios.get(Roleapi.userRole.updateUserStatue, {
+      params: {
+        statue: status,
+        userId:id,
       }
+    }).then((res)=>{
+      console.log(res);
+      this.getuserrole()
     })
-  }
+  };
   //时间戳
   getdata(createdate){
     const date=new Date(createdate);
@@ -157,7 +184,12 @@ class Operational extends React.Component {
   //循环获取radio
   getradio(list){
     let radiolist = list.map((item)=>{
-      return  <Radio className={'radioStyle'} value={item.label}>{item.value}</Radio>
+      if (item.label == 5){
+        return  <Radio className={'radioStyle'} value={item.label} disabled={true}>{item.value}</Radio>
+      }else {
+        return  <Radio className={'radioStyle'} value={item.label}>{item.value}</Radio>
+      }
+
     })
     return radiolist
   }
@@ -182,11 +214,67 @@ class Operational extends React.Component {
     this.setState({
       addvisible: true,
     });
-  }
+  };
   //添加
   adduser(){
-
-  }
+    let roleId = parseInt(this.props.data.isaddid)
+    axios.post(Roleapi.userRole.addAdminUser,{
+      password:this.props.data.isadduserpwd,
+      roleId:roleId,
+      username:this.props.data.isaddusername
+    },{
+      transformRequest:[
+        function(data){
+          let params = "";
+          var arr = [];
+          for(var key in data){
+            arr.push(key+"="+data[key]);
+          }
+          params = arr.join("&");
+          return params;
+        }
+      ]
+    }).then((res)=>{
+      console.log(res);
+      if(res.data.code == 200){
+        this.setState({
+          addvisible:false,
+        });
+        this.props.data.isaddusername = '';
+        this.props.data.isadduserpwd = ''
+      }
+    })
+  };
+  //渲染option
+  getOption(list){
+    let optionlist = list.map((item)=>{
+      if(item.id == 1){
+        return <Option key={item.id} value={item.lable} disabled={true}>{item.value}</Option>
+      }else {
+        return <Option key={item.id} value={item.lable} >{item.value}</Option>
+      }
+    })
+    return optionlist
+  };
+  //获取下拉值
+  SelectChange=(value,id)=>{
+    // console.log(value);
+    // console.log(id);
+    let ids = id.key;
+    this.props.data.isaddid = ids;
+    console.log(typeof this.props.data.isaddid);
+  };
+  //获取密码
+  Pwdfun(e){
+    this.props.data.isadduserpwd = e.target.value
+    console.log(this.props.data.isadduserpwd);
+    console.log(typeof this.props.data.isadduserpwd);
+  };
+  //获取账号
+  userfun(e){
+     this.props.data.isaddusername = e.target.value
+    console.log(typeof this.props.data.isaddusername);
+  };
   //点击取消按钮
   handleCancel = e => {
     console.log(e);
@@ -194,14 +282,18 @@ class Operational extends React.Component {
       visible: false,
       addvisible: false,
     });
+    this.props.data.isaddusername = '';
+    this.props.data.isadduserpwd = ''
   };
+
   //单选按钮change事件
   onChange = e => {
    this.props.data.roleID =  e.target.value
     console.log(this.props.data.roleID);
   };
-  //点击确定发起请求
-  addRole(){
+
+  //编辑 点击确定发起请求
+  editRole(){
     this.setState({
       visible:false,
     })
@@ -226,7 +318,7 @@ class Operational extends React.Component {
         this.getuserrole();
       }
     })
-  }
+  };
   //挂载前
   componentWillMount() {
     this.getuserrole();   //获取数据
@@ -235,7 +327,12 @@ class Operational extends React.Component {
     this.setState({
       editStatus:options
     })
-  }
+
+    let optionlist = this.getOption(this.state.rolename);
+    this.setState({
+      optionlist
+    })
+  };
 
 //渲染
   render() {
@@ -268,10 +365,10 @@ class Operational extends React.Component {
         render:(text,record)=>(
           <Space size="middle">
             <Switch
-              checkedChildren="开启"
-              unCheckedChildren="关闭"
-              onChange={()=>this.switchcheck(text)}
-              defaultChecked={record.user_statue==1?true:false}/>
+              checkedChildren="启动"
+              unCheckedChildren="禁用"
+              onChange={()=>{this.switchcheck(record.user_id,record.user_statue)}}
+              defaultChecked={record.user_statue}/>
           </Space>
         )
       },
@@ -306,7 +403,7 @@ class Operational extends React.Component {
           visible={this.state.visible}
           okText='确定'
           cancelText='取消'
-          onOk={this.addRole.bind(this)}
+          onOk={this.editRole.bind(this)}
           onCancel={this.handleCancel}
           >
 
@@ -334,6 +431,8 @@ class Operational extends React.Component {
               <Input
                 prefix={<UserOutlined className="site-form-item-icon" />}
                 placeholder="Username"
+                onChange={this.userfun.bind(this)}
+                defaultValue={ this.props.data.isaddusername}
               />
             </Col>
           </Row>
@@ -344,14 +443,24 @@ class Operational extends React.Component {
             <Col span={12}>
               <Input
                 prefix={<LockOutlined className="site-form-item-icon" />}
-                type="password" placeholder="Password"/>
+                type="password"
+                placeholder="Password"
+                onChange={this.Pwdfun.bind(this)}
+                defaultValue={ this.props.data.isadduserpwd}/>
             </Col>
           </Row>
-
+          <Row gutter={[16, 16]}>
+            <Col span={6} offset={4}>
+              <label htmlFor=""><h3>&nbsp;&nbsp;&nbsp;选择角色：</h3></label>
+            </Col>
+            <Col span={12}>
+              <Select style={{ width: '50%' }} onChange={this.SelectChange}>
+                {this.state.optionlist}
+              </Select>
+            </Col>
+          </Row>
         </Modal>
       </div>
-
-
     )
   }
 }

@@ -3,62 +3,20 @@ import { Table,  Space ,Button, Switch, Row, Col ,Input ,Form, Modal,DatePicker 
 import moment from 'moment';
 import Axios from '../../utils/axios';
 import ioApi from '../../api/index'
-// import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
-//xxx 组件名
-const { RangePicker } = DatePicker;
-// const data = [
-// {
-//     coupon_Id: '1',
-//     coupon_Userid: '1',
-//     coupon_name: "满100减10元",
-//     coupon_Starttime: '2020-1-6',
-//     coupon_Endtime:"2020-7-6"
-// },
-// {
-//     key: '2',
-//     id: '2',
-//     name: "满100减10元",
-//     create: '2020-1-6',
-//     expiration:"2020-7-6"
-// },
-// {
-//     key: '3',
-//     id: '3',
-//     name: "满100减10元",
-//     create: '2020-1-6',
-//     expiration:"2020-7-6"
-// },
-// {
-//     key: '4',
-//     id: '4',
-//     name: "满100减10元",
-//     create: '2020-1-6',
-//     expiration:"2020-7-6"
-//     },
-//     {
-//     key: '5',
-//     id: '5',
-//     name: "满100减10元",
-//     create: '2020-1-6',
-//     expiration:"2020-7-6"
-//     },
-// ];
-// const layout = {
-//     labelCol: { span: 8 },
-//     wrapperCol: { span: 16 },
-//   };
 
+const { RangePicker } = DatePicker;
 class Discount extends React.Component {
     
 //构造函数
 
     constructor(props) {
         super(props)
+        //绑定双向数据方法
         this.changeHandle = this.changeHandle.bind(this);
         this.state = {
-            id:0,
-            visible: false ,
-            visibleAdd: false,
+            id:0,//查看详情点击的id
+            visible: false ,//模态框显示
+            visibleAdd: false,//添加模态框显示
             inputId:"",    //查询id
             inputName:"",   //查询优惠券名
             addName:'',  //添加优惠券名
@@ -102,7 +60,7 @@ class Discount extends React.Component {
             })
         })
     }
-
+    //修改优惠券的状态
     onSwich(e) {
         console.log(e);
         var changeStatue = e.coupon_Statue
@@ -145,12 +103,13 @@ class Discount extends React.Component {
         // })
     }
     
-    //事件选择
+    //时间选择
     onChange(dates, dateStrings) {
+        console.log(dateStrings)
         const dateParseStart = dateStrings[0]
-        // console.log(dateParseStart)
+        console.log(dateParseStart)
         const dateParseEnd = dateStrings[1]
-        // console.log(dateParseEnd)
+        console.log(dateParseEnd)
         this.setState({
             addStartTime:dateParseStart,
             addEndTime:dateParseEnd
@@ -167,6 +126,7 @@ class Discount extends React.Component {
             inputId:e.target.value
         })
     }
+
     // 查看详情模态框
     showModal = (id) => {
         console.log(id)
@@ -174,24 +134,23 @@ class Discount extends React.Component {
         visible: true,
         id:id
         });
+        //查询详情
         Axios.post(ioApi.discount.xiangqing,{
             coupon_Id: id,
         }).then(result=>{
             console.log(result.data.data[0])
             this.setState({
-                detailsId:result.data.data[0].coupon_Id,
-                detailsName:result.data.data[0].coupon_name,
-                detailsconditions:result.data.data[0].coupon_Money,
-                detailspreferential:result.data.data[0].coupon_Startmoney,
-                detailsStartTime:result.data.data[0].coupon_Starttime,
-                detailsEndTime:result.data.data[0].coupon_Endtime,
-                detailsNum:result.data.data[0].coupon_Number,
-                detailsUserName:result.data.data[0].coupon_Userid,
+                detailsId:result.data.data[0].coupon_Id,//优惠券id
+                detailsName:result.data.data[0].coupon_name,//优惠券名
+                detailsconditions:result.data.data[0].coupon_Money,//优惠金额
+                detailspreferential:result.data.data[0].coupon_Startmoney,//使用条件
+                detailsStartTime:result.data.data[0].coupon_Starttime,//开始时间
+                detailsEndTime:result.data.data[0].coupon_Endtime,//结束时间
+                detailsNum:result.data.data[0].coupon_Number,//优惠券数量
+                detailsUserName:result.data.data[0].coupon_Userid,//创建者id
             })
         })
     };
-    // 显示模态框事件
-
 
     // 添加按钮模态框
     showModalAdd =()=>  {
@@ -202,18 +161,19 @@ class Discount extends React.Component {
 
     // 显示
     handleOk = e => {
-        console.log(e);
+        // console.log(e);
         this.setState({
             visible: false,
             visibleAdd: false,
         });
     };
-
+    //封装的双向绑定
     changeHandle(e){
         e.preventDefault()
         let key = e.target.dataset.key;
         this.setState({[key]:e.target.value})
     }
+    //添加
     add = ()=>{
         console.log(this.state.addName)
         console.log(this.state.addNum)
@@ -221,6 +181,7 @@ class Discount extends React.Component {
         console.log(this.state.addpreferential)
         console.log(this.state.addStartTime)
         console.log(this.state.addEndTime)
+        //添加优惠券
         Axios.post(ioApi.discount.add,{
             coupon_name:this.state.addName,   // 优惠券名称
             coupon_Number:this.state.addNum,  //优惠券数量
@@ -235,6 +196,7 @@ class Discount extends React.Component {
             }
         }).then(result=>{
             console.log(result)
+            //获取优惠券列表
             Axios.post(ioApi.discount.getDiscountList,
                 {
                     currentPsge:this.state.current,
@@ -260,7 +222,7 @@ class Discount extends React.Component {
     }
     // 关闭
     handleCancel = e => {
-        console.log(e);
+        // console.log(e);
         this.setState({
             visible: false,
             visibleAdd: false,

@@ -27,15 +27,15 @@ class SiderLink extends React.Component {
   };
   bindMenu(menulist){
     let MenuList = menulist.map((item)=>{
-
       let Icons = antIcons[item.menu_logo];
-      if (item.menuchilds.length == 0){
+      // console.log(item.menus.length);
+      if (item.menus.length == 0){
         return <Menu.Item key={item.menu_id} icon={<Icons/>} ><Link to={item.menu_url}>{item.menu_nameZh}</Link></Menu.Item>
       }else {
         // console.log(item.menuchilds.length)
         return <SubMenu key={item.menu_id} icon={<Icons/>} title={item.menu_nameZh} >
 
-          {this.bindMenu(item.menuchilds)}
+          {this.bindMenu(item.menus)}
         </SubMenu>
       }
     });
@@ -44,9 +44,8 @@ class SiderLink extends React.Component {
 
   componentWillMount() {
     let menulist = JSON.parse(localStorage.getItem('menu2'));
-    // console.log(menulist);
+
     let list =  this.bindMenu(menulist)
-    // console.log(list);
     this.setState({
       leftMenu : list
     });

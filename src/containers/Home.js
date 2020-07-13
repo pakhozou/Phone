@@ -7,7 +7,11 @@ import {observer,inject} from "mobx-react";   //引入内容
 import ContentRouter from '../components/ContentRouter'   //引入内容
 import { Route} from 'react-router-dom'
 import ProductDetails from '../components/Product/ProductDetails'
+import senfOrderInfo from '../components/Orderproduct/sendOrderInfo'//yoon引入组件
+
 import XiuGaiProduct from "../components/Product/XiuGaiProduct"
+
+
 
 
 
@@ -27,18 +31,18 @@ class Home extends React.Component {
         }
     }
     //生成面包屑
-  breadcrumb(key){
-    console.log('闯过来的'+key)
+    breadcrumb(key){
+    // console.log('闯过来的'+key)
     let breadcrumblist=JSON.parse(localStorage.getItem('menu2'));
     breadcrumblist.map((item)=>{
-      if(item.menuchilds.length){
+      if(item.menus.length){
         if (item.menu_id==43){
           this.setState({
             mbx1:'',
             mbx2:''
           })
         }
-        item.menuchilds.map((item2)=>{
+        item.menus.map((item2)=>{
           if (item2.menu_id == key){
             this.setState({
               mbx1:<Breadcrumb.Item>{item.menu_nameZh}</Breadcrumb.Item>,
@@ -71,13 +75,15 @@ class Home extends React.Component {
       mbx2:''
     })
   }
-  Exit=()=>{
+    Exit=()=>{
     this.props.history.push('/login');
     localStorage.clear();
   }
+
     //挂在前
     componentWillMount() {
       // console.log(this.props.data.data);
+      // this.props.data.getMenu();      //获取菜单
     }
 
 //渲染
@@ -96,6 +102,7 @@ class Home extends React.Component {
                     </h2>
                     <div className='Exit'>
                       <Button type='link' onClick={this.Exit}>Exit</Button>
+                      <h3>欢迎 <span>{this.props.data.username}</span></h3>
                     </div>
                   </div>
                 </Header>
@@ -128,7 +135,12 @@ class Home extends React.Component {
                       <ContentRouter/>
                         {/*喜德贵跳转路由*/}
                         <Route path="/index/Product/ProductDetails" component={ProductDetails}/>
+
                         <Route path="/index/Product/XiuGaiProduct" component={XiuGaiProduct}/>
+
+                        {/*yoon路由跳转*/}
+                        <Route path='/index/Orderproduct/sendOrderInfo' component={senfOrderInfo}/>
+
                     </Content>
 
                   </Layout>
