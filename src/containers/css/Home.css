@@ -5,7 +5,9 @@
   margin: 16px 28px 16px 0;
   float: left;
 }
-
+.header{
+  background-color: #00ACC1!important;
+}
 .site-layout-background {
   background: #fff;
   height: 80vh;
@@ -14,17 +16,10 @@
   float: left;
   color: white;
 }
-.Exit Button{
-  font-size: 20px;
-  line-height: 60px;
-}
-.Exit h3{
-  float: right;
-  margin-right: 50px;
-  margin-left: 50px;
-  color: white;
-}
 .Err404 {
   margin: 200PX auto;
   text-align: center;
+}
+.logintext{
+  float: right;
 }

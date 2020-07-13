@@ -39,7 +39,7 @@ class Operational extends React.Component {
       //当前页
       current:1,
       //每页显示
-      pageSize:5,
+      pageSize:3,
       //总条数
       total:0,
       //默认第几页
@@ -148,11 +148,16 @@ class Operational extends React.Component {
         return item.createTime = this.getdata(item.createTime)
       });
       res.data.data.data.createTime = xiutime;
-      this.props.data.getuserRole(res.data.data.data)
+      //绑定key
+      let data = res.data.data.data.map((item)=>{
+        item['key'] = item.user_id;
+        return item;
+      });
+      this.props.data.getuserRole(data)
     })
   };
   //是否禁用
-  switchcheck(id,status){
+  switchcheck=(id,status)=>{
     console.log(id);
     console.log(status);
     if  (status == 1){
@@ -170,6 +175,16 @@ class Operational extends React.Component {
       this.getuserrole()
     })
   };
+
+  //如果id为1禁止修改状态
+  updateDisable(id,status){
+    if(id == 1){
+      status = 1;
+      let disableStatus = status
+      return disableStatus
+    }
+  };
+
   //时间戳
   getdata(createdate){
     const date=new Date(createdate);
@@ -202,13 +217,7 @@ class Operational extends React.Component {
     this.props.data.userID = text.user_id;    //用户id
     this.props.data.roleID = text.role_id;    //角色id
   };
-  //模态框点击确定函数
-  handleOk = e => {
-    console.log(e);
-    this.setState({
-      visible: false,
-    });
-  };
+
   //点击添加
   showModel=()=>{
     this.setState({
@@ -258,7 +267,8 @@ class Operational extends React.Component {
   };
   //获取下拉值
   SelectChange=(value,id)=>{
-    // console.log(value);
+    console.log(value);
+    this.props.data.value = value
     // console.log(id);
     let ids = id.key;
     this.props.data.isaddid = ids;
@@ -283,7 +293,8 @@ class Operational extends React.Component {
       addvisible: false,
     });
     this.props.data.isaddusername = '';
-    this.props.data.isadduserpwd = ''
+    this.props.data.isadduserpwd = '';
+    this.props.data.value = '';
   };
 
   //单选按钮change事件
@@ -292,7 +303,8 @@ class Operational extends React.Component {
     console.log(this.props.data.roleID);
   };
 
-  //编辑 点击确定发起请求
+  //编辑 点击确定发起请求 //模态框点击确定函数
+
   editRole(){
     this.setState({
       visible:false,
@@ -342,7 +354,7 @@ class Operational extends React.Component {
         title: '运营人员账号ID',
         dataIndex: 'user_id',
         key: 'user_id',
-        render: text => <a>{text}</a>,
+        render: text => <Button type='link'>{text}</Button>,
       },
       {
         title: '管理员登录账号',
@@ -368,14 +380,15 @@ class Operational extends React.Component {
               checkedChildren="启动"
               unCheckedChildren="禁用"
               onChange={()=>{this.switchcheck(record.user_id,record.user_statue)}}
-              defaultChecked={record.user_statue}/>
+              defaultChecked={record.user_statue}
+            disabled={this.updateDisable(record.user_id,record.user_statue)}/>
           </Space>
         )
       },
       {
         title: '操作',
         key: 'action',
-        render: (text, record,index) => (
+        render: (text, record) => (
           <Space size="middle">
             <Button type='link' onClick={()=>{this.Edit(text)}}  disabled={this.showcaozuo(text)}>编辑</Button>
           </Space>
@@ -432,7 +445,7 @@ class Operational extends React.Component {
                 prefix={<UserOutlined className="site-form-item-icon" />}
                 placeholder="Username"
                 onChange={this.userfun.bind(this)}
-                defaultValue={ this.props.data.isaddusername}
+                value={ this.props.data.isaddusername}
               />
             </Col>
           </Row>
@@ -446,7 +459,7 @@ class Operational extends React.Component {
                 type="password"
                 placeholder="Password"
                 onChange={this.Pwdfun.bind(this)}
-                defaultValue={ this.props.data.isadduserpwd}/>
+                value={ this.props.data.isadduserpwd}/>
             </Col>
           </Row>
           <Row gutter={[16, 16]}>
@@ -454,7 +467,7 @@ class Operational extends React.Component {
               <label htmlFor=""><h3>&nbsp;&nbsp;&nbsp;选择角色：</h3></label>
             </Col>
             <Col span={12}>
-              <Select style={{ width: '50%' }} onChange={this.SelectChange}>
+              <Select style={{ width: '50%' }} onChange={this.SelectChange} value={this.props.data.value}>
                 {this.state.optionlist}
               </Select>
             </Col>

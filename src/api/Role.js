@@ -15,5 +15,4 @@ export default {
   getUserInfo : '/user/auth/getUserInfo',    //获取用户信息
   roleAddMenus :  '/user/role/roleAddMenus',  //批量添加菜单
   roleDeleteMenus:'/user/role/roleDeleteMenus'  //批量删除菜单
-
 }

@@ -10,8 +10,8 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      {/*<Route path='/' exact render={()=><Redirect to='/login'/>}/>*/}
-      <Redirect exact from='/' to='/login'/>
+      <Route path='/' exact render={()=><Redirect to='/login'/>}/>
+      {/*<Route exact from='/' to='/login'/>*/}
       <Route path='/login'  component={Login}/>
       <Route path='/index'  component={Home}/>
     </div>
