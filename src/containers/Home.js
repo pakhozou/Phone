@@ -31,10 +31,10 @@ class Home extends React.Component {
           mbx1:'',
           mbx2:''
         }
-    }
+    };
     //生成面包屑
     breadcrumb(key){
-    // console.log('闯过来的'+key)
+    console.log('闯过来的'+key)
     let breadcrumblist=JSON.parse(localStorage.getItem('menu2'));
     breadcrumblist.map((item)=>{
       if(item.menus.length){
@@ -52,16 +52,14 @@ class Home extends React.Component {
             })
           }
         })
-      }
-      else {
-        if (item.menuId==key){
-
+      }else {
+        if (item.menu_id==key){
           this.setState({
             mbx1:<Breadcrumb.Item><Link to={item.menu_url}>{item.menu_nameZh}</Link></Breadcrumb.Item>,
             mbx2:''
           })
         }
-        if (item.menuId==1){
+        if (item.menu_id==43){
           this.setState({
             mbx1:'',
             mbx2:''
@@ -69,7 +67,7 @@ class Home extends React.Component {
         }
       }
     })
-  }
+  };
     //首页点击
     editmbx(){
     this.setState({
@@ -77,10 +75,11 @@ class Home extends React.Component {
       mbx2:''
     })
   }
+
     Exit=()=>{
     this.props.history.push('/login');
     localStorage.clear();
-  }
+  };
 
     //挂在前
     componentWillMount() {
@@ -103,9 +102,16 @@ class Home extends React.Component {
                       手机配件后台管理系统
                     </h2>
                     <div className='Exit'>
-                      <Button type='link' onClick={this.Exit}>Exit</Button>
-                      <h3>欢迎 <span>{this.props.data.username}</span></h3>
+                        <h4 className='logintext'>
+                          欢迎：&nbsp;&nbsp;
+                          <span>{JSON.parse(localStorage.getItem("loginMSG"))}</span>&nbsp;&nbsp;
+                          <span>{JSON.parse(localStorage.getItem("loginName"))}</span>
+                          <Button type='danger' onClick={this.Exit} style={{marginLeft:100}}>Exit</Button>
+                        </h4>
+
+
                     </div>
+
                   </div>
                 </Header>
 
@@ -115,7 +121,6 @@ class Home extends React.Component {
                   <Sider width={200} className="site-layout-background" theme='light'>
                     <SiderLink onBreadcrumb={this.breadcrumb.bind(this)}/>
                   </Sider>
-
 
                   <Layout style={{ padding: '0 24px 24px' }}>
                     {/*面包削*/}

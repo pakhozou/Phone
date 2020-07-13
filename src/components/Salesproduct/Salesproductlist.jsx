@@ -1,6 +1,6 @@
 import React from 'react';
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
-import Axios from '../../utils/axios';
+import Axios from 'axios';
 import wjapi from '../../api/index'
 // import echarts from 'echarts' 
 // import echarts from 'echarts/lib/echarts'

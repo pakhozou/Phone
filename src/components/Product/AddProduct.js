@@ -1,7 +1,7 @@
 import React from 'react';  //导入react
 import { Upload, Modal,Row,Col,Input,Select,Button,Table,Switch,message } from 'antd';
 import { PlusOutlined,UnorderedListOutlined,InsertRowAboveOutlined,ProfileOutlined,ShoppingOutlined } from '@ant-design/icons';
-import axios from '../../utils/axios'
+import axios from 'axios'
 import ioApi from '../../api/index'
 //上传文件
 function getBase64(file) {

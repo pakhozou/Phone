@@ -3,7 +3,7 @@ import { Alert, Radio, Button, Modal, Row, Col, Input, Tooltip, Table, Space, Se
 import { SearchOutlined } from '@ant-design/icons';
 // import Demo from "./Demo"
 import './Typeproduct.css';
-import Axios from "../../utils/axios"
+import Axios from "axios"
 import Typeapi from "../../api/index"
 class typeproduct extends React.Component {
 

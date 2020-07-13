@@ -4,5 +4,6 @@ export default{
     editBrand:'/brands/editBrand',
     addBrand:'/brands/addBrand',
     upload:'/user/file/upload',
-    queryType:'/goodstype/goodsType/queryType'
+    queryType:'/goodstype/goodsType/queryType',
+    upImg:window.baseUrlConfig+"/user/file/upload"
 }

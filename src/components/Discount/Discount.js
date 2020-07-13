@@ -2,7 +2,7 @@ import React from 'react';  //导入react
 import { Table,  Space ,Button, Switch, Row, Col ,Input ,Form, Modal,DatePicker,message } from 'antd';
 import moment from 'moment';
 import locale from 'antd/lib/date-picker/locale/zh_CN'
-import Axios from '../../utils/axios';
+import Axios from 'axios';
 import ioApi from '../../api/index'
 import "./Discount/Discount.css"
 const { RangePicker } = DatePicker;

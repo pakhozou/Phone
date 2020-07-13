@@ -2,7 +2,7 @@ import React from 'react';  //导入react
 import { Table, Space, Button, Modal } from "antd";
 import { Row, Col, Select } from 'antd';
 import wjapi from '../../api/index';
-import Axios from '../../utils/axios';
+import Axios from 'axios';
 // import Axios from 'axios'
 import './Brand.css'
 import Demo from './Dome'
@@ -356,6 +356,7 @@ export default class Brand extends React.Component {
     }
     //渲染
     render() {
+
         const columns = [
             {
                 title: '品牌id',

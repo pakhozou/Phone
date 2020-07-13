@@ -2,7 +2,7 @@ import React from 'react';  //导入react
 import { Row, Col } from 'antd';
 import { Input,Select,Button,Switch,Space,Table,Tooltip,Modal,Popconfirm,message} from 'antd';
 import { DatePicker } from 'antd';
-import axios from '../../utils/axios'
+import axios from 'axios'
 import ioApi from '../../api/index'
 import locale from 'antd/lib/date-picker/locale/zh_CN'
 const { RangePicker } = DatePicker;

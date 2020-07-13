@@ -3,8 +3,10 @@ import React from 'react';  //导入react
 import { Input,Row, Col,DatePicker ,Button,Table,Space,Modal, Popconfirm,Select} from 'antd';//导入元件
 import { DownOutlined } from '@ant-design/icons';
 
-import axios from 'axios'//导入axios
+// import axios from 'axios'//导入axios
+import axios from '../../utils/axios'
 import orapi from '../../api/index'
+import locale from 'antd/lib/date-picker/locale/zh_CN'
 
 import './Orderproductlist.css'
 // import order from "../../api/order";
@@ -40,9 +42,9 @@ class Orderproductlist extends React.Component {
             //搜索的结束时间
             checkOrderEndDate:'',
             //当前页
-            current:'1',
+            current:1,
             //每页显示的条数
-            pageSize:'5',
+            pageSize:5,
             //总页数
             dataCount:'',
         }
@@ -84,6 +86,18 @@ class Orderproductlist extends React.Component {
         let timeList=res.data.data.map((item)=>{
             return item.ordersCreatetime=this.dateFormat(item.ordersCreatetime)
         })
+    }
+    //过滤支付的方式
+    filterPayMethod(paymentMethod){
+        if (paymentMethod=='1'){
+            return paymentMethod='支付宝'
+        }
+        else if (paymentMethod=='2'){
+            return paymentMethod='微信'
+        }
+        else {
+            return paymentMethod='网银'
+        }
     }
     //删除函数
     // isShanChu(index){
@@ -128,6 +142,12 @@ class Orderproductlist extends React.Component {
                 ]
             }).then((res)=>{
             console.log(res);
+            if (res.data.data!=null){
+                console.log(res.data.data)
+                // res.data.data.ordersCreatetime=this.dateFormat(res.data.data.ordersCreatetime)
+                res.data.data.ordersState=this.filterSendStateOne(res.data.data.ordersState)
+                res.data.data.paymentMethod=this.filterPayMethod(res.data.data.paymentMethod)
+            }
             this.setState({
                 orderProductList:res.data.data,
                 checkOrderList:res.data.data.list
@@ -178,6 +198,24 @@ class Orderproductlist extends React.Component {
             }
         })
     }
+    //单个发货状态的过滤器
+    filterSendStateOne(ordersState){
+        if (ordersState==1){
+            return ordersState='未支付'
+        }
+        else if(ordersState==2){
+            return ordersState='待发货'
+        }
+        else if (ordersState==3){
+            return ordersState='已发货'
+        }
+        else if (ordersState==4){
+            return ordersState='已完成'
+        }
+        else {
+            return ordersState='异常订单'
+        }
+    }
     //搜索的按钮
     searchOrder(){
         axios.post(orapi.order.selectOrderList,
@@ -202,7 +240,8 @@ class Orderproductlist extends React.Component {
                 ]
             }).then((res)=>{
                 if (res.data.data!=null){
-                    this.dateChangeRule(res);
+                    this.dateChangeRule(res)
+                    this.filterSendState(res)
                 }
                 this.setState({
                     data:res.data.data,
@@ -437,7 +476,7 @@ class Orderproductlist extends React.Component {
                             </Select>
 
                         </Col>
-                        <Col span={6}> 订单日期：<RangePicker className='orderDate' data-key='checkOrderDate' value={checkOrderDate} onChange={this.dateChange} /></Col>
+                        <Col span={6}> 订单日期：<RangePicker className='orderDate' locale={locale} data-key='checkOrderDate' value={checkOrderDate} onChange={this.dateChange} /></Col>
                         <Col span={4}>
                             <Button type="primary" className='primaryButton' onClick={this.searchOrder}>搜索</Button>
                             <Button onClick={this.orderReset}>重置</Button>
@@ -460,16 +499,17 @@ class Orderproductlist extends React.Component {
                             width='50%'
                             // cancelText='取消'
                             // okText='返回'
-                            footer={[<Button type='primary' onClick={this.handleCancel}>返回</Button>]}
+                            footer={[<Button type='primary' onClick={this.handleCancel} style={{marginBottom:'20px',marginTop:'20px', width:'100px'}} >返回</Button>]}
                             bodyStyle={{}}
                             visible={this.state.visible}
                             onCancel={this.handleCancel}
+
                         >
                             <Row>
                                    <Col span={12}>
                                       <Row>
                                           <Col span={10}>订单号：</Col>
-                                          <Col span={14}>{this.state.orderProductList.accountId}</Col>
+                                          <Col span={14}>{this.state.orderProductList.ordersNo}</Col>
                                       </Row>
                                    </Col>
                                    <Col span={12}>

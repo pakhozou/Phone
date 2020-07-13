@@ -4,7 +4,7 @@ import { Table, Form, Space, Button, Modal, Input, Upload } from "antd";
 import { Row, Col } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 // import axios from '../../utils/axios'
-// import wjapi from '../../api/index';
+import wjapi from '../../api/index';
 
 const { TextArea } = Input;
 
@@ -76,6 +76,7 @@ export default class AddBrand extends React.Component {
     }
  
     render() {
+        let upImg = wjapi.brand.upImg
         const tailLayout = {
             wrapperCol: { offset: 8, span: 16 },
         };
@@ -124,7 +125,7 @@ export default class AddBrand extends React.Component {
                             <Row>
                                 <Col span={24}>
                                     <Upload
-                                        action={'http://111.229.83.241:9601/user/file/upload'}
+                                        action={upImg}
                                         listType="picture-card"
                                         fileList={fileList}
                                         onPreview={this.handlePreview}

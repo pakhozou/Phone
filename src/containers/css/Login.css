@@ -10,19 +10,20 @@
  .login-form-button {
   width: 100%;
 }
-.LoginBox{
+.LoginBox {
     width: 650px;
     height: 450px;
-    box-shadow: 0 0 10px 0 rgba(0,0,0,.5);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, .5);
     position: absolute;
     top: 0;
     left: 200px;
     bottom: 0;
-    margin:auto;
-    background-color: rgba(255,255,255,.3);
+    margin: auto;
+    background-color: rgba(255, 255, 255, .3);
 }
 .title{
     margin-bottom: 50px;
+    color: white;
 }
 .logmin{
     height: 230px;

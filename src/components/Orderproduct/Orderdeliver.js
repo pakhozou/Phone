@@ -1,8 +1,11 @@
 import React from 'react';
 import { Input,Row, Col, Menu, Dropdown,DatePicker ,Button,Table,Space,Modal, Popconfirm, message} from 'antd';//导入元件
 import './Orderproductlist.css'
-import axios from 'axios'//导入axios
+// import axios from 'axios'//导入axios
+import axios from '../../utils/axios'
 import orapi from '../../api/index'//导入api
+import locale from 'antd/lib/date-picker/locale/zh_CN'
+
 
 //xxx 组件名
 class Orderdeliver extends React.Component {
@@ -34,9 +37,9 @@ class Orderdeliver extends React.Component {
             //搜索的结束时间
             checkOrderEndDate:'',
             //当前页
-            current:'1',
+            current:1,
             //每页显示的条数
-            pageSize:'1',
+            pageSize:5,
             //总页数
             dataCount:'',
 
@@ -321,7 +324,7 @@ class Orderdeliver extends React.Component {
               <div>
                   <Row>
                       <Col span={5}>订单ID：<Input placeholder="请输入订单号" className='orderInput' data-key='checkOrderNum'  value={checkOrderNum} onChange={this.changeHandle} type='text'/></Col>
-                      <Col span={6}> 订单日期：<RangePicker className='orderDate' data-key='checkOrderDate' value={checkOrderDate} onChange={this.dateChange} /></Col>
+                      <Col span={6}> 订单日期：<RangePicker className='orderDate' locale={locale} data-key='checkOrderDate' value={checkOrderDate} onChange={this.dateChange} /></Col>
                       <Col span={4}>
                           <Button type="primary" className='primaryButton' onClick={this.searchOrder}>搜索</Button>
                           <Button onClick={this.orderReset}>重置</Button>

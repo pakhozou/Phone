@@ -17,5 +17,5 @@ export default {
     CimgUp:"/goods/admin/GoodsManage/updateGoodsUpdateCover",//修改商品封面图
     DimgUp:"/goods/admin/GoodsManage/updateGoodsUpdateDetailImg",//修改商品详细图
     upPDmsg:"/goods/admin/GoodsManage/updateGoods",//修改商品
-    upImg:"http://111.229.83.241:9601/user/file/upload",//图片上传
+    upImg:window.baseUrlConfig+"/user/file/upload",//图片上传
 }

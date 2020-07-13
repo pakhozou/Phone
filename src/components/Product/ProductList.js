@@ -3,7 +3,7 @@ import { Row, Col } from 'antd';
 import { Input,Select,Button,Switch,Space,Table,Tooltip,Popconfirm,message} from 'antd';
 import { SearchOutlined,EditOutlined,DeleteOutlined } from '@ant-design/icons';
 import {withRouter} from 'react-router-dom'
-import axios from '../../utils/axios'
+import axios from 'axios'
 import ioApi from '../../api/index'
 const { Option } = Select;
 

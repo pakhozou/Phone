@@ -215,11 +215,11 @@ class userRole {
   @observable menulist = [];   //存放菜单数组
   @observable access_token = ''; //token
   @observable token_type='';
+  @observable refresh_token ='';
   @observable isLogin = false;  //是否登录
   @observable datalist = [];    //存放角色数组
   @observable userRolelist = [];   //存放用户数组
   @observable menu = [];   //存放用户数组
-  @observable muenarr = [];   //点击菜单
 
   @observable roleID = 0;   //角色ID
   @observable userID = 0;   //角色ID
@@ -231,11 +231,14 @@ class userRole {
   @observable isaddid = 0;  //添加用户id
   @observable isaddusername = '';  //添加用户姓名
   @observable isadduserpwd = '';  //添加用户密码
-  @observable cundangqianID = 0;    //存放当前登录用户id
+  @observable cundangqianID = 0;    //存放当前登录用户id\
+  @observable roleName = 0;   //存当前管理员信息
   @observable username = '';    //存放账号名字
   @observable RoleStatus = 0;   //角色状态
 
-  @observable treeArr = [];
+  @observable menuIds = [];   //存取获取的id
+  @observable value = '';   //运营人员下拉值
+
   //获取角色数据
   @action getRole(list) {
     this.datalist = list;
@@ -272,7 +275,9 @@ class userRole {
         if (res.data.code === 200) {
           this.access_token = res.data.data.access_token;
           this.token_type = res.data.data.token_type;
+          this.refresh_token = res.data.data.refresh_token
           localStorage.setItem('access_token', res.data.data.access_token);   //
+          localStorage.setItem('refresh_token',  this.refresh_token);   //
           resolve('登录成功')
         } else{
           reject('登录失败')
@@ -288,12 +293,9 @@ class userRole {
     this.userRolelist = userRolelist
     // console.log(JSON.parse(JSON.stringify(this.userRolelist)));
   };
-
-  @action setmenuarr=(obj)=>{
-    this.muenarr = obj;
-    // console.log(obj);
-    console.log(this.muenarr);
-  };
-
+  @action getmenulistByrole(num){
+    console.log('num',num);
+   this.menuIds=num
+  }
 }
 export default userRole

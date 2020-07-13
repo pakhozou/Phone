@@ -3,9 +3,6 @@ import axios from 'axios'
 axios.defaults.baseURL = window.baseUrlConfig;
 
 //拦截axios发起的所有请求，通过aispatch修改isLoading为true
-
-//拦截axios发起的所有请求，通过aispatch修改isLoading为true
-
 // axios.interceptors.request.use(
 //   config =>{
 //     //batoken添加到header中
@@ -19,5 +16,4 @@ axios.defaults.baseURL = window.baseUrlConfig;
 //   //将token存起来
 //   return config
 // })
-
 export default axios
