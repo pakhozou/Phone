@@ -1,8 +1,11 @@
 import React from 'react'
 import { Form, Input, Button, Checkbox,Col ,Row,notification, Space } from 'antd';
-import axios from "axios";
+// import axios from "axios";
+import axios from '../../utils/axios'
 import orapi from "../../api";
-
+import {inject,observer} from "mobx-react";
+@inject('data')
+@observer
 class sendOrderInfo extends React.Component {
     formRef=React.createRef()
     constructor(props) {
@@ -240,7 +243,7 @@ class sendOrderInfo extends React.Component {
                                         处理人：
                                     </Col>
                                     <Col span={16}>
-                                        张大大
+                                        {this.props.data.username}
                                     </Col>
                                 </Row>
                             </Col>

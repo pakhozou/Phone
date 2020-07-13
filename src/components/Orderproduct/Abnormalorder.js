@@ -17,8 +17,13 @@ import {
 } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import './Orderproductlist.css'
-import axios from 'axios'//导入axios
+// import axios from 'axios'//导入axios
+import axios from '../../utils/axios'
 import orapi from '../../api/index'
+import locale from 'antd/lib/date-picker/locale/zh_CN'
+import {inject,observer} from "mobx-react";
+@inject('data')
+@observer
 //xxx 组件名
 class Abnormalorder extends React.Component {
 //构造函数
@@ -29,6 +34,8 @@ class Abnormalorder extends React.Component {
         this.dateChange=this.dateChange.bind(this)
         this.searchOrder=this.searchOrder.bind(this)
         this.orderReset=this.orderReset.bind(this)
+        this.disAgreen=this.disAgreen.bind(this)
+        this.agree=this.agree.bind(this)
         this.state = {
             //异常订单的列表
            unusualOrderList:[],
@@ -37,9 +44,9 @@ class Abnormalorder extends React.Component {
             //控制模态框的显示
             visible:false,
             //当前页
-            current:'1',
+            current:1,
             //每页显示的条数
-            pageSize:'5',
+            pageSize:5,
             //总页数
             dataCount:'',
             //订单处理人
@@ -67,43 +74,87 @@ class Abnormalorder extends React.Component {
     componentWillMount() {
         this.getUnOrderList()
         this.setState({
-            unusualOrderDealPeople:'张大大'
+            unusualOrderDealPeople:this.props.data.username
         })
     }
 
     callback(key) {
         console.log(key);
     }
-    //模态框确定 和取消按钮
-    handleOk = e => {
-        console.log(this.state.storeOrderState)
+    //同意
+    agree(){
+        let access_token = localStorage.getItem('access_token');
+        console.log(access_token);
         console.log(this.state.unusualOrderId)
-        axios.post(orapi.order.dealUnOrder,{orderId:this.state.unusualOrderId,state :this.state.storeOrderState},{
-            transformRequest:[
-                function(data){
-                    let params = "";
-                    var arr = [];
-                    for(var key in data){
-                        arr.push(key+"="+data[key]);
+        axios.post(orapi.order.dealUnOrder,
+            {
+                orderId:this.state.unusualOrderId,
+                yesNo:'1'
+            },{
+                headers:{
+                    'Content-Type':'application/x-www-form-urlencoded',
+                    "Authorization": "bearer " + access_token,
+                },
+                transformRequest:[
+                    function(data){
+                        let params = "";
+                        var arr = [];
+                        for(var key in data){
+                            arr.push(key+"="+data[key]);
+                        }
+                        params = arr.join("&");
+                        return params;
                     }
-                    params = arr.join("&");
-                    return params;
-                }
-            ]
-        }).then((res)=>{
+                ]
+            }).then((res)=>{
             console.log(res);
+            this.getUnOrderList()
+            message.success('已向用户发送：订单已被同意!');
         })
         this.setState({
             visible: false,
         });
-    };
-
+    }
+    //不同意
+    disAgreen(){
+        let access_token = localStorage.getItem('access_token');
+        console.log(access_token);
+        console.log(this.state.unusualOrderId)
+        axios.post(orapi.order.dealUnOrder,
+            {
+                orderId:this.state.unusualOrderId,
+                yesNo:'2'
+            },{
+                headers:{
+                    'Content-Type':'application/x-www-form-urlencoded',
+                    "Authorization": "bearer " + access_token,
+                },
+                transformRequest:[
+                    function(data){
+                        let params = "";
+                        var arr = [];
+                        for(var key in data){
+                            arr.push(key+"="+data[key]);
+                        }
+                        params = arr.join("&");
+                        return params;
+                    }
+                ]
+            }).then((res)=>{
+            this.getUnOrderList()
+            message.warning('已向用户发出：订单处理被驳回!');
+        })
+        this.setState({
+            visible: false,
+        });
+    }
+    //取消的×
     handleCancel = e => {
-        console.log(e);
         this.setState({
             visible: false,
         });
     };
+    //处理订单
     dealOrder(data){
         console.log('打印orderId');
         console.log(data);
@@ -133,14 +184,20 @@ class Abnormalorder extends React.Component {
                 console.log(res.data.data)
                 res.data.data.ordersCreatetime=this.dateFormat(res.data.data.ordersCreatetime)
                 res.data.data.ordersState=this.filterSendStateOne(res.data.data.ordersState)
+                res.data.data.paymentMethod=this.filterPayMethod(res.data.data.paymentMethod)
             }
             this.setState({
                 checkOrderList:res.data.data,
-                orderProductList:res.data.data.list
-
             })
+            console.log(this.state.checkOrderList)
+            if (res.data.data.list!=null){
+                this.setState({
+                    orderProductList:res.data.data.list
+                })
+            }
         })
     }
+    //按钮过滤
     getButton =(data)=>{
         // console.log(this.state.storeOrderState);
         if (data.exceptionOrderSpeed==='未处理'){
@@ -189,7 +246,7 @@ class Abnormalorder extends React.Component {
         this.setState({
             [key]:e.target.value
         })
-        console.log()
+        console.log(e)
     }
     //获取异常订单的全部
     getUnOrderList(){
@@ -295,6 +352,18 @@ class Abnormalorder extends React.Component {
             }
         })
     }
+    //过滤支付的方式
+    filterPayMethod(paymentMethod){
+        if (paymentMethod=='1'){
+            return paymentMethod='支付宝'
+        }
+        else if (paymentMethod=='2'){
+            return paymentMethod='微信'
+        }
+        else {
+            return paymentMethod='网银'
+        }
+    }
     //分页
     fenye(nowPage){
         this.setState({
@@ -318,8 +387,10 @@ class Abnormalorder extends React.Component {
     //搜索的按钮
     searchOrder(){
         console.log('搜索')
+        console.log(this.state.checkOrderNum)
+        console.log(this.state.orderNo)
         axios.post(orapi.order.unOrderList,
-            {orderId:this.state.checkOrderNum,
+            {orderId:this.state.orderNo,
                 exceptionOrdersSpeed:this.state.checkOrderType,
                 startTiem:this.state.checkOrderStartDate,
                 endTiem:this.state.checkOrderEndDate,
@@ -355,6 +426,7 @@ class Abnormalorder extends React.Component {
 
         })
     }
+    //重置
     orderReset(){
         this.setState({
             orderNo:'',
@@ -411,8 +483,8 @@ class Abnormalorder extends React.Component {
             },
             {
                 title: '处理人',
-                dataIndex:'unusualOrderDealPeople',
-                key:'unusualOrderDealPeople'
+                dataIndex:'userName',
+                key:'userName'
             },
             {
                 title: '申请处理时间',
@@ -476,8 +548,8 @@ class Abnormalorder extends React.Component {
               <h2>未处理异常订单</h2>
               <div>
                   <Row>
-                      <Col span={5}>订单ID：<Input placeholder="请输入订单号" className='orderInput' data-key='checkOrderNum' value={checkOrderNum} onChange={this.changeHandle} type='text' /></Col>
-                      <Col span={6}> 订单日期：<RangePicker className='orderDate' data-key='checkOrderDate' value={checkOrderDate} onChange={this.dateChange}  /></Col>
+                      <Col span={5}>订单ID：<Input placeholder="请输入订单号" className='orderInput' data-key='orderNo' value={this.state.orderNo} onChange={this.changeHandle} type='text' /></Col>
+                      <Col span={6}> 订单日期：<RangePicker locale={locale} className='orderDate' data-key='checkOrderDate' value={checkOrderDate} onChange={this.dateChange}  /></Col>
                       <Col span={5}>处理人：<Input className='orderInput' data-key='dealUser' value={dealUser} onChange={this.changeHandle}/></Col>
                       <Col span={4}>处理状态：
                           <Select placeholder="请选择" value={this.state.checkOrderType} onChange={this.selctChangeType} >
@@ -535,11 +607,12 @@ class Abnormalorder extends React.Component {
                           cancelText='不同意'
                           okText='同意'
                           okType="danger"
-                          // footer={[<Button type='primary' onClick={this.handleCancel}>返回</Button>]}
+                          footer={[<Button style={{marginBottom:'20px'}} type='primary' onClick={this.agree}>同意</Button>,<Button onClick={this.disAgreen}>不同意</Button>]}
                           bodyStyle={{}}
                           visible={this.state.visible}
                           onCancel={this.handleCancel}
-                          onOk={this.handleOk}
+                          // onOk={this.handleOk}
+                          // style={{paddingBottom:'20px'}}
                       >
                           <Row>
                               <Col span={12}>
@@ -650,11 +723,11 @@ class Abnormalorder extends React.Component {
                                   </Row>
                               </Col>
                           </Row>
-                          <Row  style={{marginTop:'20px'}}>
+                          <Row  style={{marginTop:'10px'}}>
                               <Col span={24}>
                                   <Form.Item
                                       label="备注信息："
-                                      name="orderRemarks"
+                                      // name="orderRemarks"
                                       labelAlign='left'
                                       labelCol={{span:4}}
                                   >
