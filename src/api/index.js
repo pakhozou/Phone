@@ -5,6 +5,7 @@ import order from './order'//yoon引入订单api
 import brand from './brand'
 import user from './user'
 import Type from './Type'//xxm引入api
+import login from "./login"
 
 export default {
   // 喜德贵引入商品api
@@ -19,5 +20,6 @@ export default {
   Type,
   //shenyu引入用户api
   user,
+    login
 }
 

@@ -8,6 +8,7 @@ import ContentRouter from '../components/ContentRouter'   //引入内容
 import { Route} from 'react-router-dom'
 import ProductDetails from '../components/Product/ProductDetails'
 import senfOrderInfo from '../components/Orderproduct/sendOrderInfo'//yoon引入组件
+import Stocks from '../components/Stock/Stocks'//海仔
 
 import XiuGaiProduct from "../components/Product/XiuGaiProduct"
 import UserDetail from "../components/UserControl/UserDetail"
@@ -143,6 +144,9 @@ class Home extends React.Component {
                         <Route path='/index/Orderproduct/sendOrderInfo' component={senfOrderInfo}/>
                       {/*陈浩南添加*/}
                       <Route path="/index/UserControl/UserDetail/:id" component={UserDetail}/>
+
+                        {/*海仔改*/}
+                      <Route path='/index/Stock/Stocks/:id' component={Stocks}/>
 
                     </Content>
 
