@@ -8,10 +8,15 @@ import 'antd/dist/antd.min.css'   //引入antd.css
 
 import {BrowserRouter as Router} from 'react-router-dom';
 
+import {Provider} from  'mobx-react'
+import store from './store/index'
+
 ReactDOM.render(
   <React.StrictMode>
     <Router>
+      <Provider {...store}>
         <App />
+      </Provider>
     </Router>
   </React.StrictMode>,
   document.getElementById('root')

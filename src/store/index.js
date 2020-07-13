@@ -1,6 +1,6 @@
-import userStore from "./userStore";
+import userRole from "./userRole";
 
-let data = new userStore(); //new 一个userStore实例再暴露
+let data = new userRole(); //new 一个userStore实例再暴露
 
 const store={
   data
