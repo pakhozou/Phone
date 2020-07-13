@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 //喜德贵添加默认地址
-
 axios.defaults.baseURL='http://111.229.83.241:9601';
 
 
