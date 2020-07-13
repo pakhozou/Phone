@@ -10,6 +10,7 @@ import ProductDetails from '../components/Product/ProductDetails'
 import senfOrderInfo from '../components/Orderproduct/sendOrderInfo'//yoon引入组件
 
 import XiuGaiProduct from "../components/Product/XiuGaiProduct"
+import UserDetail from "../components/UserControl/UserDetail"
 
 
 
@@ -140,6 +141,8 @@ class Home extends React.Component {
 
                         {/*yoon路由跳转*/}
                         <Route path='/index/Orderproduct/sendOrderInfo' component={senfOrderInfo}/>
+                      {/*陈浩南添加*/}
+                      <Route path="/index/UserControl/UserDetail/:id" component={UserDetail}/>
 
                     </Content>
 

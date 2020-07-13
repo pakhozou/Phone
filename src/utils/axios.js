@@ -1,11 +1,8 @@
 import axios from 'axios'
-
-
 //喜德贵添加默认地址
+axios.defaults.baseURL = window.baseUrlConfig;
 
-axios.defaults.baseURL=window.baseUrlConfig;
-
- //拦截axios发起的所有请求，通过aispatch修改isLoading为true
+//拦截axios发起的所有请求，通过aispatch修改isLoading为true
 
 //拦截axios发起的所有请求，通过aispatch修改isLoading为true
 
