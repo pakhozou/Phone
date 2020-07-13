@@ -1,0 +1,34 @@
+
+.tongbi{
+    background:rgba(248,248,248,1);
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 20px;
+    font-size: 15px;
+}
+.right{
+    text-align: right;
+}
+.title{
+    color: #8E8E8E;
+    font-size: 13px;
+    padding-left: 10px;
+}
+.title2{
+    margin-top: 5px;
+    font-size:14px;
+    color:rgba(197,196,196,1);
+}
+.money{
+    font-weight: bold;
+    
+    margin-top: 10px;
+}
+.yansegre{
+    margin-left: 5px;
+    color: #48C734;
+}
+.yansered{
+    margin-left: 5px;
+    color: #FF4A4A;
+}

@@ -16,9 +16,12 @@ ReactDOM.render(
     <Router>
       <Provider {...store}>
         <App />
+
       </Provider>
     </Router>
   </React.StrictMode>,
+   
+
   document.getElementById('root')
 );
 

@@ -1,8 +1,10 @@
 
+
 import userRole from './Role'
 import product from "./product"
 import discount from './discount'
 import order from './order'//yoon引入订单api
+import brand from './brand'
 export default {
     // 喜德贵引入商品api
     product,
@@ -11,7 +13,6 @@ export default {
     //lyq引入
     discount,
     order,
+    brand,
 }
-
-
 
