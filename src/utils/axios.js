@@ -1,9 +1,11 @@
 import axios from 'axios'
-
 //喜德贵添加默认地址
-axios.defaults.baseURL = 'http://111.229.83.241:9601/'
+axios.defaults.baseURL = window.baseUrlConfig;
 
-// //拦截axios发起的所有请求，通过aispatch修改isLoading为true
+//拦截axios发起的所有请求，通过aispatch修改isLoading为true
+
+//拦截axios发起的所有请求，通过aispatch修改isLoading为true
+
 // axios.interceptors.request.use(
 //   config =>{
 //     //batoken添加到header中
@@ -18,4 +20,4 @@ axios.defaults.baseURL = 'http://111.229.83.241:9601/'
 //   return config
 // })
 
-// export default axios
+export default axios
