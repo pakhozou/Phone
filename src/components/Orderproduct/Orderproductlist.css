@@ -1,0 +1,23 @@
+.orderInput{
+    width: 60%;
+}
+.orderDate{
+    width: 60%;
+}
+.primaryButton{
+    margin-right: 10%;
+}
+.orderListPage{
+    font-size: 16px;
+}
+.ant-dropdown-link{
+    color: rgba(0,0,0,.65);
+    border:1px solid #d9d9d9;
+    font-size: 16px;
+    padding: 4px 11px;
+
+}
+.orderTable{
+    margin-top: 30px;
+}
+
