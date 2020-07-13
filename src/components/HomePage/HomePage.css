@@ -1,0 +1,133 @@
+.xxmHeader h3:nth-of-type(1) {
+    color: #2B2B2B;
+    font-weight: bold;
+}
+
+/* .xxmHeaderList{
+    border-right: 1px solid #c7c6c5;
+    text-align: center;
+} */
+
+.xxmHeader>.xxmHeaderList:nth-of-type(1) {
+    border-right: 1px solid #c7c6c5;
+}
+
+.xxmHeader>.xxmHeaderList:nth-of-type(2) {
+    border-right: 1px solid #c7c6c5;
+}
+
+.Overview {
+    color: #2B2B2B;
+    font-weight: bold;
+    /* font-size: 17px; */
+    margin-top: 60px;
+    height: 80px;
+    /* width: 87%; */
+    /* margin-left: 13%; */
+    /* border: 1px solid red; */
+}
+
+.Overview h3 {
+    font-weight: bold;
+}
+
+.firstCard {
+    display: flex;
+    justify-content: space-between;
+    height: 200px;
+    border: 1px solid #DADCE5;
+}
+
+.firstCard>span {
+    margin-top: 35px;
+    font-weight: 600;
+    color: #8E8E8E;
+    font-size: 14px;
+}
+
+.firstCard>span>h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: rgba(43, 43, 43, 1);
+    line-height: 34px;
+}
+
+.firstCard>span:nth-of-type(1) {
+    margin-left: 80px;
+}
+
+.firstCard>span:nth-of-type(3) {
+    margin-right: 80px;
+}
+
+.scdCard {
+    display: flex;
+    justify-content: space-between;
+    height: 200px;
+    border: 1px solid #DADCE5;
+}
+
+.scdCard>span {
+    margin-top: 35px;
+    font-weight: 600;
+    color: #8E8E8E;
+    font-size: 14px;
+}
+
+.scdCard>span>h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: rgba(43, 43, 43, 1);
+    line-height: 34px;
+}
+
+.scdCard>span:nth-of-type(1) {
+    margin-left: 80px;
+}
+
+.scdCard>span:nth-of-type(3) {
+    margin-right: 80px;
+}
+
+.Statistics h3 {
+    margin-top: 60px;
+    font-weight: bold;
+    color: rgba(43, 43, 43, 1);
+}
+
+.StatisticsCard {
+   
+    display: flex;
+    justify-content: space-between;
+    width: 280px;
+    height: 91px;
+    background: rgba(248, 248, 248, 1);
+    border-radius: 20px;
+    font-weight: 400;
+    color: rgba(142, 142, 142, 1);
+    font-size: 14px;
+    padding: 15px 10px 5px 10px;
+}
+
+.Statistics .StatisticsCard:nth-of-type(2),.Statistics .StatisticsCard:nth-of-type(3) {
+    margin-top: 30px;
+}
+
+.growth {
+    color: red;
+}
+.myechar{
+    height: 400px;
+}
+.headerIcon{
+    font-size: 80px;
+    color: green;
+    text-align: center;
+    line-height: 10px;
+}
+.card h1{
+    line-height: 0;
+    font-size: 50px;
+    color: green;
+    text-align: center;
+}
