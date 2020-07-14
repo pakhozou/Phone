@@ -292,6 +292,8 @@ class addProduct extends React.Component {
 
     }
     uplod=()=>{
+        let key = "up"
+        message.loading({content:"上传中",key})
         // console.log(6);
         let goodsId = this.state.id
         let goodBrandId = this.state.goodBrandId //品牌ID
@@ -346,6 +348,13 @@ class addProduct extends React.Component {
             ]
         }).then((res)=>{
             // console.log(res);
+            if(res.data.code === 200){
+                message.success({content:"修改成功",key,duration:2})
+            }
+            else {
+                message.error({content:"提交失败：后台的锅",key,duration:2})
+            }
+
         })
         // console.log(upObj);
 
@@ -369,6 +378,7 @@ class addProduct extends React.Component {
                 ]
             }).then((res)=>{
             // console.log(res);
+
             this.getProductMSG(this.state.id)
         })
     }
@@ -598,7 +608,7 @@ class addProduct extends React.Component {
                 fenL:res.data.data.data
             },function () {
                 axios.post(ioApi.product.thePingPai,{nowsPage:1,pageSize:1000,remarks:""}).then((res)=>{
-                    if(res.data !== undefined){
+                    if(res.data.code === 200){
                         this.setState({
                             //渲染下拉框
                             pingPaiListXuanRan:res.data.data.data.map(function (item) {return <Option value={item.goodsBrand_id}>{item.goodsBrand_name}</Option>}),
@@ -606,6 +616,9 @@ class addProduct extends React.Component {
                         },function () {
                             this.getProductMSG(thisId)
                         })
+                    }
+                    else {
+                        message.error({content:"品牌下拉框获取失败，后台的锅"})
                     }
                 })
             })

@@ -9,6 +9,7 @@ import {
   Select,
   Row,
   Col,
+    Input,
   message
 } from 'antd';
 import Roleapi from '../../api/index'
@@ -27,6 +28,7 @@ class AuthorityRole extends React.Component {
   //构造函数
   constructor(props) {
     super(props);
+     let  routerid=[];
     this.state = {
       //编辑显示隐藏
       visible: false,
@@ -153,77 +155,59 @@ class AuthorityRole extends React.Component {
       checkeds:[],
       //添加选择权限
       muenarr:[],
+
+      menuIds:[],
+
+        editId:'',
+        Inputtxt:'',
     }
   }
   //判断是否禁用
-  showcaozuo(data){
-    if (data.role_id == 1){
-      data.status =1
-    }
-    let disableStatus = data.status;
-    return disableStatus
-  }
+  // showcaozuo(data,status){
+  //   if (data == 1){
+  //       status =1
+  //   }
+  //   let disableStatus = status;
+  //   return disableStatus
+  // }
 
   //*****编辑函数******
   //编辑
-  Edit(id) {
+  Edit(id,name) {
     console.log(id);
     this.setState({
       visible: true,
     });
+    this.props.data.role_nameZh = name;
+    this.props.data.roleid = id
     this.getMenuListByRole(id);
   }
 
-  //模态框确定按钮
+  //编辑模态框确定按钮
   handleOk = e => {
     console.log(e);
-    return new Promise((resolve)=>{
-      let selectvalue = this.props.data.selectvalue;
-      axios.post(Roleapi.userRole.addRole,{
-          "level": 10,
-          "role_name": "string",
-          "role_nameZh": selectvalue,
-          "status": 1
-        },
-        {
-          headers:{
-            'Content-Type':'application/json'
-          }
-        }).then((res)=>{
-        console.log(res);
-        if(res.data.code == 200){
-          // 角色添加菜单
-          axios.post(Roleapi.userRole.roleAddMenus,{
-            menuIds:  this.props.data.menuIds,
-            roleId : this.props.data.ids
-          },{
+    console.log(this.props.data.role_nameZh);
+    if(this.props.data.role_nameZh){
+        axios.post(Roleapi.userRole.roleAddMenus,{
+            menuIds: this.state.menuIds,
+            roleId : this.props.data.roleid
+        },{
             headers:{
-              'Content-Type':'application/json'
+                'Content-Type':'application/json'
             }
-          }).then((res)=>{
+        }).then((res)=>{
             console.log(res);
-            this.props.data.menuIds=[];
             if (res.data.code == 200){
-              resolve('添加成功')
+                message.success('编辑成功')
+                this.setState({
+                    muenarr:'',
+                    visible:false,
+                });
             }else {
-              resolve('添加失败')
+                message.error('编辑失败')
             }
-          });
-        }
-      });
-    }).then((res)=>{
-      console.log(res);
-      if (res == '添加成功'){
-        this.getRolelist();     //调用数据
-        this.setState({
-           muenarr:'',
-          visible:false,
         });
-        message.success(res)
-      }else{
-        message.error(res)
-      }
-    })
+    }
   };
   //模态框取消按钮
   handleCancel = e => {
@@ -233,18 +217,50 @@ class AuthorityRole extends React.Component {
       addvisible: false,
     });
     this.props.data.selectvalue = '';
-    this.props.data.menuIds = '';
+    this.setState({
+      menuIds:[]
+    })
   };
 
   onCheck = checkedKeys => {
-    console.log('onCheck', checkedKeys);
+    this.routerid = [];
+    this.routerid = checkedKeys;
+    // console.log(this.routerid);
+    this.setState({
+      menuIds: this.routerid
+    });
+    console.log(this.state.menuIds);
   };
 
   onSelect = (selectedKeys, info) => {
     console.log('onSelect', info);
-
   };
-
+    addonCheck = ()=> {
+        let selectvalue = this.state.Inputtxt;
+        axios.post(Roleapi.userRole.addRole, {
+                "level": 10,
+                "role_name": "string",
+                "role_nameZh": selectvalue,
+                "status": 1
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then((res) => {
+            console.log(res);
+            if (res.data.code == 200) {
+                message.success('添加成功')
+                this.setState({
+                    // visible: false,
+                    addvisible: false,
+                });
+                this.getRolelist();
+            } else {
+                message.error('添加失败')
+            }
+        })
+    }
   //删除事件
   Del(id){
     // console.log(id.role_id);
@@ -264,9 +280,17 @@ class AuthorityRole extends React.Component {
             return params;
           }
         ]
-      }).then(()=>{
+      }).then((res)=>{
       // console.log(res);
-      this.getRolelist()      //调用数据
+        if(res.data.code == 200){
+            message.success('删除成功')
+            this.setState({
+                current:1,
+            })
+            this.getRolelist()      //调用数据
+        }else {
+            message.error('删除失败')
+        }
     })
 
   }
@@ -332,14 +356,14 @@ class AuthorityRole extends React.Component {
   getRolelist() {
     axios.get(Roleapi.userRole.userRole).then((res) => {
       // console.log('获取的角色');
-      // console.log(res.data.data);
+      console.log(res.data.data);
       this.setState({
         total : res.data.data.length
       },function () {
         console.log(this.state.total);
       });
       let data = res.data.data.map((item)=>{
-        item['key'] = item.user_id;
+        item['key'] = item.role_id;
         return item;
       });
       //返回值
@@ -348,12 +372,15 @@ class AuthorityRole extends React.Component {
   };
 
   //下拉值
-  SelectChange=(value,id)=>{
-    // console.log(id);
-    let ids = id.key;
-    console.log(ids);
-    this.props.data.selectvalue =  value;
-    this.props.data.ids =  ids;
+  SelectChange=(e)=>{
+      console.log(e);
+      // console.log(id);
+    // let ids = id.key;
+    // console.log(ids);
+    this.setState({
+        Inputtxt:e.target.value
+    });
+    // this.props.data.ids =  ids;
     // console.log('selectvalue');
     // console.log( this.state.selectvalue);
     //  根据id得到菜单
@@ -401,11 +428,9 @@ class AuthorityRole extends React.Component {
   addRole=()=>{
     this.setState({
       addvisible:false,
-      visible: true,
+      // visible: true,
     });
-    this.getMenuListByRole(this.props.data.ids);
-//批量添加菜单
-    console.log(this.props.data.ids);
+
   };
 
   //根据角色id获取列表
@@ -422,28 +447,20 @@ class AuthorityRole extends React.Component {
         }).then((res)=>{
           console.log(res);
           if (res.data.code == 200) {   //判断
-            let num=[];
-            this.props.data.menuIds = [];
+            // let num=[];
+            this.routerid = [];
             let treekeys = res.data.data;
             //遍历
             treekeys.map((item) => {
               // console.log(item.menu_id);
-              num.push(item.menu_id);   //赋值
-              // console.log('datadata', this.props.data)//存进数组
+              this.routerid.push(item.menu_id);   //赋值
             });
-            this.props.data.getmenulistByrole(num)
-            console.log(this.props.data.menuIds);
+            this.setState({
+              menuIds:this.routerid
+            })
           }
       })
-    // })
-// .then((res)=>{
-//         // console.log(res);
-//      if(res == 'ok' && this.props.data.menuIds!==''){
-//        setTimeout(() =>{
-//          return this.showTree()
-//        },1000)
-//      }
-//       })
+
   }
 
   //树形控件
@@ -475,16 +492,16 @@ class AuthorityRole extends React.Component {
 
   }
   //更新后
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    // console.log(prevProps);
-  }
+  // componentDidUpdate(prevProps, prevState, snapshot) {
+  //   // console.log(prevProps);
+  // }
 
   //渲染
   render() {
 //取消添加按钮
     //表格
     // console.log('123456789',this.props.data.menuIds)
-    let Router =[...this.props.data.menuIds];
+    let Router =[...this.state.menuIds];
     // console.log('Router',Router);
     const columns = [
       {
@@ -503,13 +520,13 @@ class AuthorityRole extends React.Component {
         key: 'action',
         render: (text,record) => (
           <Space size="middle" >
-            <Button type='link' onClick={()=>this.Edit(record.role_id)} disabled={this.showcaozuo(text)}>编辑</Button>
+            <Button type='link' onClick={()=>this.Edit(record.role_id,record.role_nameZh)}  >编辑</Button>
             <Popconfirm
               title="确定删除吗？"
               onConfirm={()=>this.Del(text)}
               okText="确定"
               cancelText="取消">
-              <Button type='link' disabled={this.showcaozuo(text)}>删除</Button>
+              <Button type='link'   style={{color:'red'}}>删除</Button>
             </Popconfirm>
           </Space>
         ),
@@ -556,18 +573,27 @@ class AuthorityRole extends React.Component {
           //取消两个原始按钮
           okText='确定'
           cancelText='取消'
-          onOk={this.addRole}
+          onOk={this.addonCheck}
           onCancel={this.handleCancel}
         >
           {/*选择管理员职位*/}
           <label htmlFor=""><h3>选择角色：</h3></label>
-          <Select style={{ width: '50%' }} onChange={this.SelectChange} value={this.props.data.selectvalue}>
-            {this.state.optionlist}
-          </Select>
+          {/*<Select style={{ width: '50%' }}  >*/}
+            {/*{this.state.optionlist}*/}
+          {/*</Select>*/}
+            <Input onChange={this.SelectChange} value={this.state.Inputtxt}/>
           <br/>
           {/*选择权限*/}
           {/*<label htmlFor=""><h3>选择权限：</h3></label>*/}
           {/*{this.showTree()}*/}
+          {/*<Tree*/}
+              {/*checkable*/}
+              {/*// onExpand={this.onExpand}*/}
+              {/*onCheck={this.addonCheck}*/}
+              {/*onSelect={this.onSelect}*/}
+              {/*treeData={this.state.treeData}*/}
+              {/*checkedKeys={Router}*/}
+          {/*/>*/}
         </Modal>
       </div>
     )

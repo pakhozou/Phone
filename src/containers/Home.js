@@ -106,7 +106,7 @@ class Home extends React.Component {
                           欢迎：&nbsp;&nbsp;
                           <span>{JSON.parse(localStorage.getItem("loginMSG"))}</span>&nbsp;&nbsp;
                           <span>{JSON.parse(localStorage.getItem("loginName"))}</span>
-                          <Button type='danger' onClick={this.Exit} style={{marginLeft:100}}>Exit</Button>
+                          <Button onClick={this.Exit} style={{marginLeft:100,color:"rgb(255,255,255)",backgroundColor:"#FF7136",border:"none"}} >Exit</Button>
                         </h4>
 
 

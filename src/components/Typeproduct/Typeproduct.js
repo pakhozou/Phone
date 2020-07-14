@@ -268,7 +268,7 @@ class typeproduct extends React.Component {
         return (
             <div>
                 <Row className="top">
-                    <Col span={2} offset={1}><h4>商品类型</h4></Col>
+                    <Col span={2} offset={0}><h4>商品类型</h4></Col>
                     <Col span={3} offset={0.5}>
                         <Select  defaultValue="选择类型" onChange={this.handleChange.bind(this)}>
                             {
@@ -286,7 +286,7 @@ class typeproduct extends React.Component {
                     </Col>
                 </Row>
                 <Row className="Table">
-                    <Col span={22} offset={1}>
+                    <Col span={22} offset={0}>
                         <Table bordered="ture" columns={this.state.columns} tableLayout="auto" dataSource={this.state.Data} pagination={this.fenye()} />
                     </Col>
                 </Row>

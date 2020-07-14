@@ -1,6 +1,6 @@
 import React from 'react';  //导入react
 //yoon 改 202-7-6 19：03
-import { Input,Row, Col,DatePicker ,Button,Table,Space,Modal, Popconfirm,Select} from 'antd';//导入元件
+import { Input,Row, Col,DatePicker ,Button,Table,Space,Modal, Popconfirm,Select,message} from 'antd';//导入元件
 import { DownOutlined } from '@ant-design/icons';
 
 // import axios from 'axios'//导入axios
@@ -301,6 +301,7 @@ class Orderproductlist extends React.Component {
                 }
             ]
         }).then((res)=>{
+            message.success('删除成功！');
             this.getOrderList()
         })
     }

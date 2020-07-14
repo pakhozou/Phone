@@ -80,6 +80,10 @@ class Operational extends React.Component {
       inputpwd:'',
       //账号
       inputuser:'',
+
+        rolelist:[],
+
+        option:[]
     }
   }
 
@@ -109,7 +113,6 @@ class Operational extends React.Component {
 
   changPage(current){
     console.log(current);
-
     this.setState({
       current:current
     },function () {
@@ -184,7 +187,33 @@ class Operational extends React.Component {
       return disableStatus
     }
   };
-
+    getRolelists() {
+       let data = []
+       new Promise((res2)=>{
+            axios.get(Roleapi.userRole.userRole).then((res) => {
+                // console.log('获取的角色');
+                console.log(res.data.data);
+                data = res.data.data.map((item) => {
+                    console.log('aaa');
+                    // item['key'] = item.role_id;
+                    return  <Radio className={'radioStyle'} value={item.role_id}>{item.role_nameZh}</Radio>
+                })
+                console.log(data)
+                if(data.length ){
+                  console.log('aaa')
+                    res2('ok')
+                }
+            })
+       }).then((res)=>{
+           console.log(data)
+          if(res == 'ok'){
+              this.setState({
+                  rolelist:data
+              })
+          }
+       })
+            //返回值
+    };
   //时间戳
   getdata(createdate){
     const date=new Date(createdate);
@@ -196,18 +225,6 @@ class Operational extends React.Component {
     const sec = date.getSeconds();
     return year+"-"+month+"-"+day+ "  "+ hour+":" +min+":"+sec ;
   };
-  //循环获取radio
-  getradio(list){
-    let radiolist = list.map((item)=>{
-      if (item.label == 5){
-        return  <Radio className={'radioStyle'} value={item.label} disabled={true}>{item.value}</Radio>
-      }else {
-        return  <Radio className={'radioStyle'} value={item.label}>{item.value}</Radio>
-      }
-
-    })
-    return radiolist
-  }
   //编辑
   Edit=(text)=>{
     this.setState({
@@ -216,6 +233,7 @@ class Operational extends React.Component {
     console.log(text.user_id);
     this.props.data.userID = text.user_id;    //用户id
     this.props.data.roleID = text.role_id;    //角色id
+      this.getRolelists()
   };
 
   //点击添加
@@ -223,6 +241,7 @@ class Operational extends React.Component {
     this.setState({
       addvisible: true,
     });
+    this.getOption()
   };
   //添加
   adduser(){
@@ -255,15 +274,33 @@ class Operational extends React.Component {
     })
   };
   //渲染option
-  getOption(list){
-    let optionlist = list.map((item)=>{
-      if(item.id == 1){
-        return <Option key={item.id} value={item.lable} disabled={true}>{item.value}</Option>
-      }else {
-        return <Option key={item.id} value={item.lable} >{item.value}</Option>
-      }
-    })
-    return optionlist
+  getOption(){
+          let data = []
+          new Promise((res2)=>{
+              axios.get(Roleapi.userRole.userRole).then((res) => {
+                  // console.log('获取的角色');
+                  console.log(res.data.data);
+                  data = res.data.data.map((item) => {
+                      console.log('aaa');
+                      // item['key'] = item.role_id;
+                    return <Option value={item.role_id}>{item.role_nameZh}</Option>
+                      // <Option key={item.role_id} value={item.role_id} disabled={true}>{item.role_nameZh}</Option>
+                  })
+                  console.log(data)
+                  if(data.length ){
+                      console.log('aaa')
+                      res2('ok')
+                  }
+              })
+          }).then((res)=>{
+              console.log(data)
+              if(res == 'ok'){
+                  this.setState({
+                      option:data
+                  })
+              }
+          })
+          //返回值
   };
   //获取下拉值
   SelectChange=(value,id)=>{
@@ -333,19 +370,20 @@ class Operational extends React.Component {
   };
   //挂载前
   componentWillMount() {
-    this.getuserrole();   //获取数据
+      this.getRolelists();
+      this.getuserrole();   //获取数据
 
-    let options =this.getradio(this.state.options);
-    this.setState({
-      editStatus:options
-    })
+      console.log(this.props.data.rolelist);
 
-    let optionlist = this.getOption(this.state.rolename);
+
+    let optionlist = this.getOption(this.state.rolelist);
     this.setState({
       optionlist
     })
   };
+    componentDidMount(){
 
+}
 //渲染
   render() {
     //表格
@@ -421,7 +459,7 @@ class Operational extends React.Component {
           >
 
           <Radio.Group  onChange={this.onChange} value={this.props.data.roleID}>
-            {this.state.editStatus}
+            {this.state.rolelist}
           </Radio.Group>
 
         </Modal>
@@ -468,7 +506,7 @@ class Operational extends React.Component {
             </Col>
             <Col span={12}>
               <Select style={{ width: '50%' }} onChange={this.SelectChange} value={this.props.data.value}>
-                {this.state.optionlist}
+                {this.state.option}
               </Select>
             </Col>
           </Row>

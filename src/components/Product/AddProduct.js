@@ -474,7 +474,7 @@ class addProduct extends React.Component {
         return (
             <div>
                 <h2>添加商品</h2>
-                <Row>
+                <Row  style={{marginTop:80}}>
                     <Col>
                         <h3><UnorderedListOutlined />&nbsp;&nbsp;商品基础信息</h3>
                     </Col>
@@ -503,7 +503,7 @@ class addProduct extends React.Component {
                     <Col span={3} style={{textAlign:"right"}}>商品详情：</Col>
                     <Col><TextArea rows={4} onChange={this.ProductDetails.bind(this)} value={this.state.ProductDetails} style={{marginLeft:30,width:500}}/></Col>
                 </Row>
-                <Row>
+                <Row  style={{marginTop:80}}>
                     <Col>
                         <h3><InsertRowAboveOutlined />&nbsp;&nbsp;商品规格信息</h3>
                     </Col>
@@ -519,7 +519,7 @@ class addProduct extends React.Component {
                         </Row>
                     </Col>
                 </Row>
-                <Row style={{marginTop:30}}>
+                <Row style={{marginTop:80}}>
                     <Col>
                         <h3><ProfileOutlined />&nbsp;&nbsp;商品详细信息</h3>
                     </Col>
@@ -582,7 +582,7 @@ class addProduct extends React.Component {
                     <Col span={3} style={{textAlign:"right"}}>商品关键字：</Col>
                     <Col><Input placeholder="商品关键字" onChange={this.keyword.bind(this)} value={this.state.keyword} style={{marginLeft:30,width:500}}/></Col>
                 </Row>
-                <Row style={{marginTop:30}}>
+                <Row style={{marginTop:80}}>
                     <Col>
                         <h3><ShoppingOutlined />&nbsp;&nbsp;商品活动信息</h3>
                     </Col>

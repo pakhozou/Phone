@@ -395,6 +395,7 @@ class StockList extends React.Component {
         ).then((ser)=> {
             if(ser.data.code===200){
                 message.success('进货成功');
+                this.formAdd()
             }else {
                 message.error(ser.data.msg);
                 // console.log(ser.data.msg)
@@ -598,7 +599,13 @@ class StockList extends React.Component {
                 </div>
                 {/*添加*/}
                 <div>
-                    <Button type="primary" onClick={this.showModal}>添加</Button>
+                    <Row gutter={16}>
+                        <Col className="gutter-row" span={20}>
+                        </Col>
+                        <Col className="gutter-row" span={4}>
+                            <Button type="primary" onClick={this.showModal}>添加</Button>
+                        </Col>
+                    </Row>
                     <Modal
                         title="添加"
                         visible={this.state.visible}

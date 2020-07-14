@@ -236,15 +236,21 @@ class userRole {
   @observable username = '';    //存放账号名字
   @observable RoleStatus = 0;   //角色状态
 
-  @observable menuIds = [];   //存取获取的id
+  @observable role_nameZh = [];   //存取获取的id
+    @observable roleid = 0;
   @observable value = '';   //运营人员下拉值
+    @observable rolelist = [];
 
   //获取角色数据
   @action getRole(list) {
     this.datalist = list;
-    // console.log(JSON.parse(JSON.stringify(this.datalist)));
+    console.log(JSON.parse(JSON.stringify(this.datalist)));
   };
-
+    // @action getRolebinduser(list) {
+    //     console.log(list);
+    //     this.rolelist = list;
+    //     console.log(JSON.parse(JSON.stringify(this.rolelist)));
+    // };
   //登录
   @action login = (obj) => {
     return new Promise((resolve, reject) => {
@@ -293,9 +299,9 @@ class userRole {
     this.userRolelist = userRolelist
     // console.log(JSON.parse(JSON.stringify(this.userRolelist)));
   };
-  @action getmenulistByrole(num){
-    console.log('num',num);
-   this.menuIds=num
-  }
+  // @action getmenulistByrole(num){
+  //   console.log('num',num);
+  //  this.menuIds=num
+  // }
 }
 export default userRole

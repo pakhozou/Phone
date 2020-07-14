@@ -38,4 +38,5 @@
 .bg{
     background-image: linear-gradient(rgb(22,97,185),rgb(4,234,242));
     height: 100vh;
+    /*background-color: red;*/
 }

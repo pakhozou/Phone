@@ -323,7 +323,7 @@ class Orderdeliver extends React.Component {
               <h2>发货管理</h2>
               <div>
                   <Row>
-                      <Col span={5}>订单ID：<Input placeholder="请输入订单号" className='orderInput' data-key='checkOrderNum'  value={checkOrderNum} onChange={this.changeHandle} type='text'/></Col>
+                      <Col span={5}>订单号：<Input placeholder="请输入订单号" className='orderInput' data-key='checkOrderNum'  value={checkOrderNum} onChange={this.changeHandle} type='text'/></Col>
                       <Col span={6}> 订单日期：<RangePicker className='orderDate' locale={locale} data-key='checkOrderDate' value={checkOrderDate} onChange={this.dateChange} /></Col>
                       <Col span={4}>
                           <Button type="primary" className='primaryButton' onClick={this.searchOrder}>搜索</Button>
